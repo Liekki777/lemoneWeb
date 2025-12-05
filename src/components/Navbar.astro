@@ -1,0 +1,244 @@
+---
+// src/components/Navbar.astro
+import Search from './Search.astro';
+---
+
+<!-- NAVBAR SIMPLE Y ELEGANTE -->
+<nav class="navbar fixed-top navbar-dark shadow" style="background:#0d1117; min-height:64px; z-index:1050;">
+  <div class="container-fluid px-4 d-flex align-items-center justify-content-between">
+    <a class="navbar-brand fw-bold fs-3 text-white" href="/">Mi Blog</a>
+
+    <!-- MENÚ DESKTOP -->
+    <div class="d-none d-lg-flex align-items-center gap-5">
+      <a href="/" class="text-white text-decoration-none fs-5">Inicio</a>
+      <a href="/blog" class="text-danger fw-bold text-decoration-none fs-5">Blog</a>
+      
+      <a href="/guias" class="text-white text-decoration-none fs-5">Guías</a>
+      <a href="/destacado" class="text-white text-decoration-none fs-5">Destacado</a>
+      <a href="/noticias" class="text-white text-decoration-none fs-5">Noticias</a>
+      <a href="/bananaSpace" class="text-white text-decoration-none fs-5">BananaSpace</a>
+      <a href="/tienda" class="text-white text-decoration-none fs-5">Tienda</a>
+        <button type="button" id="cartBtnDesktop" class="btn btn-link position-relative text-white p-0" aria-label="Abrir carrito" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+          <i class="bi bi-cart fs-5"></i>
+          <span id="cart-count" class="badge bg-danger rounded-pill position-absolute" style="top:-6px; right:-10px; font-size:0.65rem; display:none;">0</span>
+        </button>
+      <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#customSearchModal">
+        <i class="bi bi-search"></i> Buscar
+      </button>
+    </div>
+
+    <!-- BOTÓN BUSCAR (móvil) + HAMBURGUESA (se mantiene para mejoras futuras) -->
+    <div class="d-lg-none d-flex gap-3 align-items-center">
+      <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#customSearchModal" aria-label="Buscar">
+        <i class="bi bi-search"></i>
+      </button>
+      <button id="mobileMenuBtn" class="btn btn-danger rounded-circle d-flex align-items-center justify-content-center" style="width:44px;height:44px;" aria-label="Abrir menú" data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvas" aria-controls="mobileOffcanvas">
+        <i class="bi bi-list fs-3"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- BOTTOM NAV MÓVIL (estilo compacto tipo nintenderos) -->
+<nav id="mobileBottomNav" class="d-lg-none position-fixed start-0 end-0 bottom-0 bg-dark text-white d-flex justify-content-around align-items-center py-2 shadow-lg" style="z-index:1050;">
+  <a href="/" class="text-center text-white text-decoration-none small d-flex flex-column align-items-center" aria-label="Inicio">
+    <i class="bi bi-house fs-4"></i>
+    <span class="d-block" style="font-size:11px;line-height:1">Inicio</span>
+  </a>
+  <button type="button" id="cartBtnMobile" class="text-center text-white text-decoration-none small d-flex flex-column align-items-center position-relative btn btn-link p-0" aria-label="Abrir carrito" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+    <i class="bi bi-cart fs-4"></i>
+    <span id="cart-count-mobile" class="badge bg-danger rounded-pill position-absolute" style="top:0; right:6px; font-size:0.65rem; display:none;">0</span>
+    <span class="d-block" style="font-size:11px;line-height:1">Carrito</span>
+  </button>
+  <a href="/blog" class="text-center text-white text-decoration-none small d-flex flex-column align-items-center" aria-label="Blog">
+    <i class="bi bi-journal-text fs-4"></i>
+    <span class="d-block" style="font-size:11px;line-height:1">Blog</span>
+  </a>
+  <a href="/guias" class="text-center text-white text-decoration-none small d-flex flex-column align-items-center" aria-label="Guías">
+    <i class="bi bi-book fs-4"></i>
+    <span class="d-block" style="font-size:11px;line-height:1">Guías</span>
+  </a>
+  <a href="/destacado" class="text-center text-white text-decoration-none small d-flex flex-column align-items-center" aria-label="Destacado">
+    <i class="bi bi-star fs-4"></i>
+    <span class="d-block" style="font-size:11px;line-height:1">Destacado</span>
+  </a>
+  <a href="/noticias" class="text-center text-white text-decoration-none small d-flex flex-column align-items-center" aria-label="Noticias">
+    <i class="bi bi-megaphone fs-4"></i>
+    <span class="d-block" style="font-size:11px;line-height:1">Noticias</span>
+  </a>
+  
+</nav>
+
+<!-- MODAL DE BÚSQUEDA (siempre en el DOM → Pagefind lo detecta) -->
+<!-- Renderizo el componente de búsqueda personalizado (modal + script) -->
+<Search />
+
+<!-- OFFCANVAS MÓVIL (se abre desde el botón hamburguesa) -->
+<div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="mobileOffcanvas" aria-labelledby="mobileOffcanvasLabel">
+  <div class="offcanvas-header border-0">
+    <h5 class="offcanvas-title" id="mobileOffcanvasLabel">Menú</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+  </div>
+  <div class="offcanvas-body py-2">
+    <div class="list-group list-group-flush">
+      <a href="/" class="list-group-item list-group-item-action bg-transparent text-white py-3">Inicio</a>
+      <a href="/blog" class="list-group-item list-group-item-action bg-transparent text-white py-3">Blog</a>
+      <a href="/guias" class="list-group-item list-group-item-action bg-transparent text-white py-3">Guías</a>
+      <a href="/destacado" class="list-group-item list-group-item-action bg-transparent text-white py-3">Destacado</a>
+      <a href="/noticias" class="list-group-item list-group-item-action bg-transparent text-white py-3">Noticias</a>
+    </div>
+  </div>
+</div>
+
+<!-- OFFCANVAS CARRITO -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="cartOffcanvasLabel">Tu carrito</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div id="cartOffcanvasItems" class="list-group"></div>
+  </div>
+  <div class="offcanvas-footer p-3 border-top d-flex justify-content-between align-items-center">
+    <div id="cartOffcanvasTotal" class="fw-bold">Total: €0.00</div>
+    <div>
+      <a href="/tienda/carrito" class="btn btn-sm btn-outline-primary me-2">Ver carrito</a>
+      <button id="cartCheckoutBtn" class="btn btn-sm btn-primary">Pagar</button>
+    </div>
+  </div>
+</div>
+        <style is:global>
+    body { padding-top: 80px; padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+  .hover-red { transition: all .3s; }
+  .hover-red:hover, .hover-red:active { background:#cc0000; transform:scale(1.05); }
+  /* Offcanvas personalizado (derecha) */
+  #mobileOffcanvas.offcanvas-end {
+    width: 80vw;
+    max-width: 360px;
+  }
+
+  @media (max-width: 576px) {
+    #mobileOffcanvas.offcanvas-end { width: 100vw; }
+  }
+
+  /* Animaciones para botones de bottom nav */
+  #mobileBottomNav a {
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+
+  #mobileBottomNav a:active {
+    transform: scale(0.85);
+    filter: brightness(0.9);
+  }
+
+  #mobileBottomNav a:hover {
+    transform: scale(1.1);
+    text-shadow: 0 0 8px rgba(220, 0, 0, 0.5);
+  }
+
+  /* Efecto de ripple en móvil (pulse visual) */
+  @media (hover: none) {
+    #mobileBottomNav a:active {
+      animation: pulse-ripple 0.6s ease-out;
+    }
+  }
+
+  @keyframes pulse-ripple {
+    0% {
+      box-shadow: 0 0 0 0 rgba(220, 0, 0, 0.7);
+      transform: scale(0.85);
+    }
+    70% {
+      box-shadow: 0 0 0 12px rgba(220, 0, 0, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(220, 0, 0, 0);
+      transform: scale(1);
+    }
+  }
+</style>
+<script>
+  function updateCartCount() {
+    try {
+      const Cart = (globalThis as any).Cart;
+      const count = Cart ? (Cart.get() || []).reduce((s: number, i: any) => s + (i.quantity || 0), 0) : 0;
+      const desktop = document.getElementById('cart-count');
+      const mobile = document.getElementById('cart-count-mobile');
+      if (desktop) {
+        if (count > 0) { desktop.style.display = 'inline-block'; desktop.textContent = String(count); }
+        else { desktop.style.display = 'none'; }
+      }
+      if (mobile) {
+        if (count > 0) { mobile.style.display = 'inline-block'; mobile.textContent = String(count); }
+        else { mobile.style.display = 'none'; }
+      }
+    } catch (e) { /* silent */ }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateCartCount();
+    window.addEventListener('cart-updated', updateCartCount);
+    // Render offcanvas content
+    const renderOffcanvas = () => {
+      try {
+        const Cart: any = (globalThis as any).Cart;
+        const items = Cart ? (Cart.get() || []) : [];
+        const container = document.getElementById('cartOffcanvasItems');
+        const totalEl = document.getElementById('cartOffcanvasTotal');
+        if (!container || !totalEl) return;
+        container.innerHTML = '';
+        let total = 0;
+        if (!items.length) {
+          container.innerHTML = '<div class="text-muted">Tu carrito está vacío</div>';
+        } else {
+          for (const it of items) {
+            total += it.price * (it.quantity || 0);
+            const a = document.createElement('div');
+            a.className = 'list-group-item d-flex align-items-center justify-content-between';
+            a.innerHTML = `
+              <div class="d-flex align-items-center gap-3">
+                <img src="${it.image}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;" />
+                <div>
+                  <div class="fw-bold small mb-1">${it.title}</div>
+                  <div class="small text-muted">€${Number(it.price).toFixed(2)} × ${it.quantity}</div>
+                </div>
+              </div>
+              <div class="text-end">
+                <button class="btn btn-sm btn-outline-secondary me-1 cart-off-decr" data-id="${it.id}">−</button>
+                <button class="btn btn-sm btn-outline-secondary cart-off-incr" data-id="${it.id}">+</button>
+              </div>
+            `;
+            container.appendChild(a);
+          }
+        }
+        totalEl.textContent = `Total: €${Number(total).toFixed(2)}`;
+        // attach handlers
+        for (const b of Array.from(container.querySelectorAll('.cart-off-decr'))) {
+          b.addEventListener('click', () => {
+            const id = (b as Element).getAttribute('data-id');
+            const current = Cart.get().find((x: any) => x.id === id);
+            if (current) Cart.update(id, current.quantity - 1);
+            renderOffcanvas();
+          });
+        }
+        for (const b of Array.from(container.querySelectorAll('.cart-off-incr'))) {
+          b.addEventListener('click', () => {
+            const id = (b as Element).getAttribute('data-id');
+            const current = Cart.get().find((x: any) => x.id === id);
+            if (current) Cart.update(id, current.quantity + 1);
+            renderOffcanvas();
+          });
+        }
+      } catch (e) { /* silent */ }
+    };
+
+    // render when opened and when cart changes
+    const cartOff = document.getElementById('cartOffcanvas');
+    if (cartOff) cartOff.addEventListener('show.bs.offcanvas', renderOffcanvas);
+    window.addEventListener('cart-updated', renderOffcanvas);
+    // checkout button: go to carrito page
+    const checkoutBtn = document.getElementById('cartCheckoutBtn');
+    if (checkoutBtn) checkoutBtn.addEventListener('click', () => { window.location.href = '/tienda/carrito'; });
+  });
+</script>

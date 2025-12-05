@@ -1,0 +1,44 @@
+---
+// src/components/Giscus.astro
+const { repoId, categoryId } = Astro.props;  // Para que sea dinámico si quieres
+---
+
+<div class="container my-5">
+  <div class="giscus border rounded p-4 bg-light"></div>
+</div>
+
+<script src="https://giscus.app/client.js"
+        data-repo="Liekki777/lemone"
+        data-repo-id="R_kgDOQhKQ3Q"
+        data-category="General"
+        data-category-id="DIC_kwDOQhKQ3c4CzTWM"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="es"
+        crossorigin="anonymous"
+        async>
+</script>
+<style is:global>
+  /* Temas personalizados que puedes usar cambiando data-theme */
+  .giscus[data-theme="light"] { background: #ffffff; }
+  .giscus[data-theme="light_high_contrast"] { background: #ffffff; }
+  .giscus[data-theme="dark"] { background: #0d1117; }
+  .giscus[data-theme="dark_high_contrast"] { background: #010409; }
+  .giscus[data-theme="preferred_color_scheme"] { 
+    background: var(--giscus-bg, #ffffff); 
+  }
+
+  /* Tema personalizado limpio (opcional, súper bonito) */
+  .giscus[data-theme="light_tritanopia"] { background: #f6f8fa; }
+  .giscus[data-theme="dark_dimmed"] { background: #21262d; }
+
+  /* Pequeños retoques para que quede perfecto en Bootstrap */
+  .giscus-frame {
+    border-radius: 12px !important;
+    border: 1px solid var(--bs-border-color) !important;
+  }
+</style>

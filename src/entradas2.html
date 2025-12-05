@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venta de entradas - Array simple</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    button { padding: 15px 30px; font-size: 18px; }
+    .agotadas { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Concierto de Bad Bunny 2026</h1>
+  <p>Entradas disponibles: <span id="contador">10</span></p>
+  <button id="btnComprar">Comprar entrada</button>
+  <p id="mensaje"></p>
+
+  <script>
+    // 2º Array de entradas (pueden ser números de serie, asientos, etc.)
+    let entradas = ["A001", "A002", "A003", "A004", "A005", "A006", "A007", "A008", "A009", "A010"];
+
+    const btnComprar = document.getElementById('btnComprar');
+    const contador = document.getElementById('contador');
+    const mensaje = document.getElementById('mensaje');
+
+    // Función para actualizar el contador en pantalla
+    function actualizarContador() {
+      contador.textContent = entradas.length;
+    }
+
+    actualizarContador(); // primera vez
+
+    btnComprar.addEventListener('click', function() {
+      if (entradas.length > 0) {
+        const entradaComprada = entradas.pop(); // quitamos la última
+        actualizarContador();
+        mensaje.textContent = `¡Compraste la entrada ${entradaComprada}!`;
+
+        if (entradas.length === 0) {
+          btnComprar.disabled = true;
+          btnComprar.textContent = "AGOTADAS";
+          mensaje.innerHTML = "<span class='agotadas'>¡Entradas agotadas!</span>";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

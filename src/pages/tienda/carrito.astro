@@ -1,0 +1,19 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ShoppingCart from '../../components/Shop/ShoppingCart.astro';
+import CheckoutForm from '../../components/Shop/CheckoutForm.astro';
+---
+
+<Layout title="Carrito">
+  <div class="container py-5">
+    <h1 class="mb-4">Carrito</h1>
+    <div class="row g-4">
+      <div class="col-12 col-md-6">
+        <ShoppingCart />
+      </div>
+      <div class="col-12 col-md-6">
+        <CheckoutForm />
+      </div>
+    </div>
+  </div>
+</Layout>

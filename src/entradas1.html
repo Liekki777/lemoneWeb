@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venta de entradas - Básico</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    button { padding: 15px 30px; font-size: 18px; }
+    .agotadas { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Concierto de Bad Bunny 2026</h1>
+  <p>Entradas disponibles: <span id="contador">10</span></p>
+  <button id="btnComprar">Comprar entrada</button>
+  <p id="mensaje"></p>
+
+  <script>
+    // 2º Variables
+    let entradasDisponibles = 10;
+    const btnComprar = document.getElementById('btnComprar');
+    const contador = document.getElementById('contador');
+    const mensaje = document.getElementById('mensaje');
+
+    // 3º Evento click
+    btnComprar.addEventListener('click', function() {
+      if (entradasDisponibles > 0) {
+        entradasDisponibles--;               // reducimos una
+        contador.textContent = entradasDisponibles;
+
+        if (entradasDisponibles === 0) {
+          btnComprar.disabled = true;
+          btnComprar.textContent = "AGOTADAS";
+          mensaje.innerHTML = "<span class='agotadas'>¡Entradas agotadas!</span>";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

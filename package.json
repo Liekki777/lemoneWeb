@@ -1,0 +1,19 @@
+{
+  "name": "c-users-oceano-documents-astro-bootstrap002",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "preview:search": "npm run build && xcopy /E /I /Y dist\\pagefind public\\pagefind && npm run preview"
+  },
+  "dependencies": {
+    "@astrojs/netlify": "^6.6.3",
+    "astro": "^5.16.3",
+    "astro-pagefind": "^1.8.5"
+  },
+  "devDependencies": {
+    "pagefind": "^1.4.0"
+  }
+}

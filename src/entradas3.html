@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venta de entradas - Cards PRO</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; }
+    h1 { text-align: center; }
+    #contenedor { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
+    .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; }
+    .card h3 { margin: 0 0 10px; }
+    .card p { margin: 5px 0; color: #555; }
+    .card button { margin-top: 15px; padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .card button:disabled { background: #666; cursor: not-allowed; }
+    .card.vendida { opacity: 0.6; background: #f8d7da; }
+    .card.vendida button { display: none; }
+    #mensaje { text-align: center; margin-top: 30px; font-size: 1.4em; }
+    .agotadas { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Concierto de Bad Bunny - Madrid 2026</h1>
+  <p style="text-align:center;">Haz click en "Comprar" para reservar tu entrada</p>
+
+  <div id="contenedor"></div>
+  <p id="mensaje"></p>
+
+  <script>
+    // 2º Array de objetos con las entradas
+    const entradas = [
+      { id: 1, zona: "Pista", precio: 85, asiento: "Libre" },
+      { id: 2, zona: "Grada Baja", precio: 120, asiento: "Fila 5" },
+      { id: 3, zona: "Grada Alta", precio: 65, asiento: "Fila 22" },
+      { id: 4, zona: "VIP", precio: 250, asiento: "Mesa 1" },
+      { id: 5, zona: "Pista", precio: 85, asiento: "Libre" },
+      { id: 6, zona: "Grada Baja", precio: 120, asiento: "Fila 8" },
+    ];
+
+    const contenedor = document.getElementById('contenedor');
+    const mensaje = document.getElementById('mensaje');
+
+    // 4º Función para mostrar todas las cards
+    function mostrarEntradas() {
+      contenedor.innerHTML = ""; // limpiamos
+
+      for (const entrada of entradas) {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        if (entrada.vendida) card.classList.add('vendida');
+
+        card.innerHTML = `
+          <h3>Entrada #${entrada.id}</h3>
+          <p><strong>Zona:</strong> ${entrada.zona}</p>
+          <p><strong>Precio:</strong> ${entrada.precio}€</p>
+          <p><strong>Asiento:</strong> ${entrada.asiento}</p>
+          <button ${entrada.vendida ? 'disabled' : ''}>
+            ${entrada.vendida ? 'VENDIDA' : 'Comprar'}
+          </button>
+        `;
+
+        // Si no está vendida, añadimos el evento
+        if (!entrada.vendida) {
+          const btn = card.querySelector('button');
+          btn.addEventListener('click', () => comprarEntrada(entrada, card));
+        }
+
+        contenedor.appendChild(card);
+      }
+
+      // Comprobar si quedan entradas
+      const disponibles = entradas.filter(e => !e.vendida).length;
+      if (disponibles === 0) {
+        mensaje.innerHTML = "<span class='agotadas'>¡Todas las entradas están agotadas!</span>";
+      } else {
+        mensaje.textContent = `Quedan ${disponibles} entradas disponibles`;
+      }
+    }
+
+    // 7º Función para comprar (descontar)
+    function comprarEntrada(entrada, cardElement) {
+      entrada.vendida = true;
+      alert(`¡Entrada ${entrada.id} comprada! Zona ${entrada.zona} - ${entrada.precio}€`);
+      mostrarEntradas(); // actualizamos toda la vista
+    }
+
+    // Primera carga
+    mostrarEntradas();
+  </script>
+</body>
+</html>

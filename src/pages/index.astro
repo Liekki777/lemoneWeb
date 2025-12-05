@@ -1,0 +1,83 @@
+---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3); // Solo los 3 más nuevos
+---
+
+<Layout title="LEMONE">
+  <Navbar />
+
+  <!-- Hero brutal -->
+  <section class="bg-primary text-white py-5">
+    <div class="container text-center py-5">
+      <h1 class="display-3 fw-bold">¡Bienvenido a mi blog!</h1>
+      <p class="lead fs-3 mb-4">Artículos frescos, rápidos y con mucho amor</p>
+      <a href="/blog" class="btn btn-light btn-lg px-5 py-3 fw-bold">
+        Ir al Blog →
+      </a>
+    </div>
+  </section>
+
+  <!-- Últimos posts -->
+  <section class="container py-5">
+    <h2 class="display-5 text-center mb-5 fw-bold">Últimos artículos</h2>
+
+    {posts.length === 0 ? (
+      <p class="text-center text-muted fs-4">Pronto habrá contenido... ¡estate atento!</p>
+    ) : (
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {posts.map((post: CollectionEntry<'blog'>) => (
+          <div class="col">
+            <article class="card h-100 shadow-lg hover-shadow border-0">
+              <div class="card-body d-flex flex-column">
+                <h3 class="card-title h5 fw-bold">
+                  <a href={`/blog/${post.slug}`} class="text-decoration-none text-dark stretched-link">
+                    {post.data.title}
+                  </a>
+                </h3>
+                <p class="text-muted small mb-3">
+                  {post.data.pubDate.toLocaleDateString('es-ES')} • {post.data.author}
+                </p>
+                <p class="card-text flex-grow-1">{post.data.description}</p>
+                <div class="mt-auto d-flex gap-2 flex-wrap">
+                  {post.data.tags.map((tag: string) => (
+                    <span class="badge bg-primary">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </article>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {posts.length > 0 && (
+      <div class="text-center mt-5">
+        <a href="/blog" class="btn btn-outline-primary btn-lg px-5">
+          Ver todos los artículos →
+        </a>
+      </div>
+    )}
+  </section>
+
+  <!-- Footer simple -->
+  <footer class="bg-dark text-white text-center py-5 mt-5">
+    <p class="mb-0">Hecho con ❤️ y Astro + Bootstrap</p>
+  </footer>
+</Layout>
+
+<style>
+  .hover-shadow {
+    transition: all 0.3s ease;
+  }
+  .hover-shadow:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2) !important;
+  }
+</style>

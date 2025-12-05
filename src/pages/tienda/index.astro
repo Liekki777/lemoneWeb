@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductCard from '../../components/Shop/ProductCard.astro';
+import products from '../../data/products.json';
+---
+
+<Layout title="Tienda">
+  <div class="container py-5">
+    <h1 class="mb-4">Tienda</h1>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      {products.map(product => (
+        <div class="col">
+          <ProductCard product={product} />
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>

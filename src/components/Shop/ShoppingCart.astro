@@ -1,0 +1,92 @@
+---
+// Componente de carrito: se renderiza en cliente y escucha eventos 'cart-updated'
+---
+
+<div id="shoppingCartRoot">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Tu carrito</h5>
+      <div id="cartItems" class="mt-3"></div>
+      <div id="cartSummary" class="mt-3"></div>
+      <div class="mt-3 d-flex gap-2">
+        <a href="/tienda/carrito" class="btn btn-outline-primary">Ver carrito</a>
+        <button id="clearCartBtn" class="btn btn-danger">Vaciar carrito</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Este script asume que /scripts/cart-store.js está cargado (define window.Cart)
+  function formatPrice(v: any) { return '€' + Number(v).toFixed(2); }
+
+  function renderCart() {
+    const root = document.getElementById('shoppingCartRoot');
+    const Cart: any = (globalThis as any).Cart;
+    if (!root || !Cart) return;
+    const itemsContainer = document.getElementById('cartItems');
+    const summary = document.getElementById('cartSummary');
+    if (!itemsContainer || !summary) return;
+    const items = Cart.get();
+
+    if (!items || items.length === 0) {
+      itemsContainer!.innerHTML = '<div class="text-muted">Tu carrito está vacío</div>';
+      summary!.innerHTML = '';
+      return;
+    }
+    itemsContainer!.innerHTML = '';
+    let total = 0;
+    for (const it of items) {
+      total += it.price * it.quantity;
+      const div = document.createElement('div');
+      div.className = 'd-flex align-items-center justify-content-between py-2 border-bottom';
+      div.innerHTML = `
+        <div class="d-flex align-items-center gap-3">
+          <img src="${it.image}" alt="${it.title}" style="width:54px;height:54px;object-fit:cover;border-radius:6px;"/>
+          <div>
+            <div class="fw-bold">${it.title}</div>
+            <div class="text-muted small">${formatPrice(it.price)} × ${it.quantity}</div>
+          </div>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <button class="btn btn-sm btn-outline-secondary cart-decrease" data-id="${it.id}">−</button>
+          <button class="btn btn-sm btn-outline-secondary cart-increase" data-id="${it.id}">+</button>
+          <button class="btn btn-sm btn-outline-danger cart-remove" data-id="${it.id}">x</button>
+        </div>
+      `;
+      itemsContainer.appendChild(div);
+    }
+
+    summary!.innerHTML = `<div class="fw-bold">Total: ${formatPrice(total)}</div>`;
+
+    // attach handlers
+    for (const b of Array.from(document.querySelectorAll('.cart-decrease'))) {
+      b.addEventListener('click', () => {
+        const id = (b as Element).getAttribute('data-id');
+        const current = Cart.get().find((x: any) => x.id === id);
+        if (current) Cart.update(id, current.quantity - 1);
+      });
+    }
+    for (const b of Array.from(document.querySelectorAll('.cart-increase'))) {
+      b.addEventListener('click', () => {
+        const id = (b as Element).getAttribute('data-id');
+        const current = Cart.get().find((x: any) => x.id === id);
+        if (current) Cart.update(id, current.quantity + 1);
+      });
+    }
+    for (const b of Array.from(document.querySelectorAll('.cart-remove'))) {
+      b.addEventListener('click', () => {
+        const id = (b as Element).getAttribute('data-id');
+        if (id) Cart.remove(id);
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const Cart: any = (globalThis as any).Cart;
+    if (Cart) renderCart();
+    window.addEventListener('cart-updated', renderCart);
+    const clearBtn = document.getElementById('clearCartBtn');
+    if (clearBtn) clearBtn.addEventListener('click', () => Cart && Cart.clear());
+  });
+</script>

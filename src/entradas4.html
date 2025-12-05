@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entradas + Carrito de compras</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 100px; }
+    h1, h2 { text-align: center; color: #333; }
+    #contenedor { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+      gap: 20px; 
+      padding: 20px; 
+      max-width: 1200px; 
+      margin: 0 auto; 
+    }
+    .card { 
+      background: white; 
+      border-radius: 12px; 
+      padding: 20px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+      text-align: center; 
+      transition: transform 0.2s;
+    }
+    .card:hover { transform: translateY(-5px); }
+    .card h3 { margin: 0 0 10px; color: #1a73e8; }
+    .card button { 
+      margin-top: 15px; padding: 12px 24px; background: #1a73e8; color: white; 
+      border: none; border-radius: 6px; cursor: pointer; font-size: 16px;
+    }
+    .card button:disabled { background: #999; cursor: not-allowed; }
+
+    /* Carrito flotante */
+    #carrito {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 360px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      padding: 20px;
+      z-index: 1000;
+    }
+    #listaCarrito { max-height: 300px; overflow-y: auto; margin: 15px 0; }
+    .item-carrito {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid #eee;
+    }
+    .item-carrito button {
+      background: #dc3545; color: white; border: none; border-radius: 50%; 
+      width: 28px; height: 28px; cursor: pointer;
+    }
+    #total { font-size: 1.4em; font-weight: bold; text-align: right; margin: 15px 0; }
+    #btnFinalizar { 
+      width: 100%; padding: 14px; background: #28a745; color: white; 
+      border: none; border-radius: 8px; font-size: 18px; cursor: pointer;
+    }
+    #btnVaciar { 
+      width: 100%; margin-top: 8px; background: #ffc107; color: #333;
+      padding: 10px; border: none; border-radius: 8px; cursor: pointer;
+    }
+    #mensaje { text-align: center; font-size: 1.3em; margin: 20px; }
+    .agotadas { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>Concierto Bad Bunny - Madrid 2026</h1>
+  <p style="text-align:center;">Selecciona tus entradas y añádelas al carrito</p>
+
+  <div id="contenedor"></div>
+  <p id="mensaje"></p>
+
+  <!-- CARRITO -->
+  <div id="carrito">
+    <h2>Mi Carrito <span id="contadorCarrito">(0)</span></h2>
+    <div id="listaCarrito"></div>
+    <div id="total">Total: 0€</div>
+    <button id="btnFinalizar">Confirmar compra</button>
+    <button id="btnVaciar">Vaciar carrito</button>
+  </div>
+
+  <script>
+    // Array de entradas disponibles
+    const entradas = [
+      { id: 1, zona: "Pista", precio: 85, asiento: "Libre" },
+      { id: 2, zona: "Grada Baja", precio: 120, asiento: "Fila 5" },
+      { id: 3, zona: "Grada Alta", precio: 65, asiento: "Fila 22" },
+      { id: 4, zona: "VIP", precio: 250, asiento: "Mesa 1" },
+      { id: 5, zona: "Pista", precio: 85, asiento: "Libre" },
+      { id: 6, zona: "Grada Baja", precio: 120, asiento: "Fila 8" },
+      { id: 7, zona: "VIP", precio: 250, asiento: "Mesa 3" },
+      { id: 8, zona: "Grada Alta", precio: 65, asiento: "Fila 30" },
+    ];
+
+    // Carrito del usuario
+    let carrito = [];
+
+    const contenedor = document.getElementById('contenedor');
+    const listaCarrito = document.getElementById('listaCarrito');
+    const totalElement = document.getElementById('total');
+    const contadorCarrito = document.getElementById('contadorCarrito');
+    const btnFinalizar = document.getElementById('btnFinalizar');
+    const btnVaciar = document.getElementById('btnVaciar');
+    const mensaje = document.getElementById('mensaje');
+
+    // Mostrar todas las entradas
+    function mostrarEntradas() {
+      contenedor.innerHTML = "";
+      for (const entrada of entradas) {
+        const yaEnCarrito = carrito.some(item => item.id === entrada.id);
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        if (yaEnCarrito) card.style.opacity = "0.6";
+
+        card.innerHTML = `
+          <h3>Entrada #${entrada.id}</h3>
+          <p><strong>Zona:</strong> ${entrada.zona}</p>
+          <p><strong>Precio:</strong> ${entrada.precio}€</p>
+          <p><strong>Asiento:</strong> ${entrada.asiento}</p>
+          <button ${yaEnCarrito ? 'disabled' : ''}>
+            ${yaEnCarrito ? 'En el carrito' : 'Añadir al carrito'}
+          </button>
+        `;
+
+        if (!yaEnCarrito) {
+          card.querySelector('button').addEventListener('click', () => añadirAlCarrito(entrada));
+        }
+
+        contenedor.appendChild(card);
+      }
+    }
+
+    // Añadir al carrito
+    function añadirAlCarrito(entrada) {
+      carrito.push(entrada);
+      actualizarCarrito();
+      mostrarEntradas();
+      mensaje.innerHTML = `<span style="color:green;">¡Entrada #${entrada.id} añadida al carrito!</span>`;
+    }
+
+    // Quitar del carrito (devuelve la entrada al stock)
+    function quitarDelCarrito(id) {
+      carrito = carrito.filter(item => item.id !== id);
+      actualizarCarrito();
+      mostrarEntradas();
+    }
+
+    // Actualizar vista del carrito
+    function actualizarCarrito() {
+      listaCarrito.innerHTML = "";
+      let total = 0;
+
+      carrito.forEach(item => {
+        total += item.precio;
+        const div = document.createElement('div');
+        div.className = 'item-carrito';
+        div.innerHTML = `
+          <span>Entrada #${item.id} - ${item.zona} (${item.precio}€)</span>
+          <button onclick="quitarDelCarrito(${item.id})">X</button>
+        `;
+        listaCarrito.appendChild(div);
+      });
+
+      totalElement.textContent = `Total: ${total}€`;
+      contadorCarrito.textContent = `(${carrito.length})`;
+    }
+
+    // Vaciar carrito
+    btnVaciar.addEventListener('click', () => {
+      carrito = [];
+      actualizarCarrito();
+      mostrarEntradas();
+      mensaje.textContent = "Carrito vaciado";
+    });
+
+    // Confirmar compra final
+    btnFinalizar.addEventListener('click', () => {
+      if (carrito.length === 0) {
+        alert("Tu carrito está vacío");
+        return;
+      }
+
+      // Aquí marcaríamos como vendidas de verdad (en un proyecto real iría al servidor)
+      alert(`¡Compra confirmada!\nTotal: ${carrito.reduce((sum, e) => sum + e.precio, 0)}€\nEntradas: ${carrito.map(e => e.id).join(', ')}\n¡Nos vemos en el concierto! 🎉`);
+
+      // Vaciamos el carrito y actualizamos
+      carrito = [];
+      actualizarCarrito();
+      mostrarEntradas();
+      mensaje.innerHTML = "<span class='agotadas'>¡Gracias por tu compra!</span>";
+    });
+
+    // Inicio
+    mostrarEntradas();
+    actualizarCarrito();
+  </script>
+</body>
+</html>
