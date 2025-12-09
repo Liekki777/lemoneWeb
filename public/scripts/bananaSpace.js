@@ -45,12 +45,14 @@
 
   createEnemies();
 
+  function shoot() {
+    bullets.push({ x: player.x + player.w / 2 - 2, y: player.y, w: 4, h: 10 });
+  }
+
   function keyDownHandler(e) {
     if (e.key == 'Right' || e.key == 'ArrowRight') player.dx = player.speed;
     else if (e.key == 'Left' || e.key == 'ArrowLeft') player.dx = -player.speed;
-    else if (e.key == ' ' || e.code == 'Space') {
-      bullets.push({ x: player.x + player.w / 2 - 2, y: player.y, w: 4, h: 10 });
-    }
+    else if (e.key == ' ' || e.code == 'Space') shoot();
   }
 
   function keyUpHandler(e) {
@@ -61,6 +63,36 @@
 
   document.addEventListener('keydown', keyDownHandler);
   document.addEventListener('keyup', keyUpHandler);
+
+  // --- INICIO: Añadir controles táctiles ---
+  let touchShootInterval = null;
+
+  function touchStartHandler(e) {
+    e.preventDefault(); // Prevenir el scroll de la página
+    const relativeX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+    player.x = Math.max(0, Math.min(relativeX - player.w / 2, canvas.width - player.w));
+
+    if (!touchShootInterval) {
+      touchShootInterval = setInterval(shoot, 300); // Dispara cada 300ms
+    }
+  }
+
+  function touchMoveHandler(e) {
+    e.preventDefault();
+    const relativeX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+    player.x = Math.max(0, Math.min(relativeX - player.w / 2, canvas.width - player.w));
+  }
+
+  function touchEndHandler() {
+    clearInterval(touchShootInterval);
+    touchShootInterval = null;
+  }
+
+  canvas.addEventListener('touchstart', touchStartHandler, { passive: false });
+  canvas.addEventListener('touchmove', touchMoveHandler, { passive: false });
+  canvas.addEventListener('touchend', touchEndHandler);
+  canvas.addEventListener('touchcancel', touchEndHandler);
+  // --- FIN: Añadir controles táctiles ---
 
   function draw() {
     if (gameOver) {
