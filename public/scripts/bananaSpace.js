@@ -7,7 +7,12 @@
 
   // Variables del juego
   let score = 0;
+  const HIGH_SCORE_KEY = 'bananaSpaceHighScore';
+  let highScore = localStorage.getItem(HIGH_SCORE_KEY) || 0;
   let gameOver = false;
+
+  const highScoreEl = document.getElementById('high-score');
+  if (highScoreEl) highScoreEl.textContent = highScore;
 
   const player = {
     x: canvas.width / 2 - 15,
@@ -101,6 +106,13 @@
       ctx.textAlign = 'center';
       ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
       ctx.font = '15px Arial';
+
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem(HIGH_SCORE_KEY, highScore);
+        if (highScoreEl) highScoreEl.textContent = highScore;
+      }
+
       ctx.fillText('Pulsa Reiniciar para jugar de nuevo', canvas.width / 2, canvas.height / 2 + 30);
       return;
     }
@@ -157,6 +169,13 @@
   // Reiniciar juego
   const restartBtn = document.getElementById('restartBtn');
   if (restartBtn) restartBtn.addEventListener('click', () => {
-    score = 0; gameOver = false; player.x = canvas.width / 2 - 15; bullets.length = 0; createEnemies(); draw();
+    score = 0;
+    gameOver = false;
+    player.x = canvas.width / 2 - 15;
+    bullets.length = 0;
+    createEnemies();
+    // No reiniciamos el high score, solo lo mostramos
+    if (highScoreEl) highScoreEl.textContent = highScore;
+    draw();
   });
 })();

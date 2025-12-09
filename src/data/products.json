@@ -1,8 +1,8 @@
 [
-  { "id": "p1", "title": "Camiseta Retro", "price": 19.99, "image": "https://via.placeholder.com/420x280?text=Camiseta+Retro", "description": "Camiseta de algodón con estampado retro. Disponible en S/M/L." },
-  { "id": "p2", "title": "Sudadera Minimal", "price": 39.99, "image": "https://via.placeholder.com/420x280?text=Sudadera+Minimal", "description": "Sudadera cómoda con capucha. Tela premium." },
-  { "id": "p3", "title": "Gorra Classic", "price": 14.5, "image": "https://via.placeholder.com/420x280?text=Gorra+Classic", "description": "Gorra con logo bordado. Ajustable." },
-  { "id": "p4", "title": "Taza Cerámica", "price": 9.95, "image": "https://via.placeholder.com/420x280?text=Taza+Ceramica", "description": "Taza para café con diseño exclusivo." },
-  { "id": "p5", "title": "Poster A3", "price": 12.0, "image": "https://via.placeholder.com/420x280?text=Poster+A3", "description": "Póster imprimido en papel de alta calidad." },
-  { "id": "p6", "title": "Pegatina Pack", "price": 4.99, "image": "https://via.placeholder.com/420x280?text=Pegatina+Pack", "description": "Pack de pegatinas para laptops y cuadernos." }
+  { "id": "p1", "title": "Camiseta Hombre", "price": 19.99, "image": "/images/tienda/camisetaHombre.png", "description": "Camiseta de algodón con estampado Lemone. Disponible en S/M/L." },
+  { "id": "p2", "title": "Camiseta Mujer", "price": 19.99, "image": "/images/tienda/camisetaMujer.png", "description": "Sudadera cómoda con capucha. Tela premium." },
+  { "id": "p3", "title": "Gorra Classic", "price": 14.99, "image": "/images/tienda/gorra.png", "description": "Gorra con logo bordado. Ajustable." },
+  { "id": "p4", "title": "Taza Cerámica", "price": 9.99, "image": "/images/tienda/taza.png", "description": "Taza para café con diseño exclusivo." },
+  { "id": "p5", "title": "Poster A3", "price": 11.99, "image": "/images/tienda/poster.png", "description": "Póster imprimido en papel de alta calidad." },
+  { "id": "p6", "title": "Disco Vinilo", "price": 24.99, "image": "/images/tienda/vinilo.png", "description": "La música mas grandiosa que han escuchado tus miserables oídos." }
 ]

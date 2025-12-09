@@ -1,7 +1,9 @@
 // Código del juego de trileros extraído a archivo externo
 // Se asume que este script se carga con `defer` para que el DOM esté listo
 
+const HIGH_SCORE_KEY = 'trilerosHighScore';
 let score = 0;
+let highScore = localStorage.getItem(HIGH_SCORE_KEY) || 0;
 let isPlaying = false;
 let ballPosition = 1;
 let cupPositions = [0,1,2];
@@ -9,6 +11,8 @@ let cupPositions = [0,1,2];
 const ball = document.getElementById('ball');
 const cups = [document.getElementById('cup0'),document.getElementById('cup1'),document.getElementById('cup2')];
 const scoreEl = document.getElementById('score');
+const highScoreEl = document.getElementById('high-score');
+if (highScoreEl) highScoreEl.textContent = highScore;
 const msgEl = document.getElementById('message');
 const btnEl = document.getElementById('playBtn');
 
@@ -84,6 +88,11 @@ async function guess(cupIndex){
     if (ball) ball.classList.add('visible'); // Hacer la pelota visible solo si es correcto
     if (msgEl) { msgEl.textContent = '¡Correcto! +1 Punto'; msgEl.style.color = '#198754'; }
     score++; if (scoreEl) scoreEl.textContent = score;
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem(HIGH_SCORE_KEY, highScore);
+      if (highScoreEl) highScoreEl.textContent = highScore;
+    }
   } else {
     if (msgEl) { msgEl.textContent = '¡Fallaste! Puntos a 0'; msgEl.style.color = '#dc3545'; }
     score = 0; if (scoreEl) scoreEl.textContent = score;
