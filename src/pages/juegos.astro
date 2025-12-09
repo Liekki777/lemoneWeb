@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// --- LISTA DE JUEGOS ---
+// Para añadir un nuevo juego, simplemente agrega un objeto a este array.
+const games = [
+  {
+    title: 'Juego de Trileros',
+    url: '/trileros', // URL de la página del juego
+    image: '/images/games/trileros-preview.png', // Imagen de vista previa
+    description: 'Pon a prueba tu atención y encuentra la pelota. ¿Podrás seguirle el ritmo?'
+  },
+  {
+    title: 'Banana Space',
+    url: '/bananaSpace',
+    image: '/images/games/bananaspace-preview.png',
+    description: 'Defiende la galaxia de los invasores en este clásico arcade de disparos.'
+  },
+  // {
+  //   title: 'Próximo Juego',
+  //   url: '/proximo-juego',
+  //   image: '/images/games/placeholder.png',
+  //   description: 'Un nuevo y emocionante juego que llegará pronto.'
+  // }
+];
+---
+
+<Layout title="Galería de Juegos">
+  <main class="container py-5">
+    <div class="text-center mb-5">
+      <h1 class="display-4">Galería de Juegos</h1>
+      <p class="lead text-muted">Haz clic en cualquier juego para empezar a jugar.</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {games.map(game => (
+        <div class="col">
+          <a href={game.url} class="card-link">
+            <div class="card h-100 shadow-sm game-card">
+              <img src={game.image} class="card-img-top" alt={`Vista previa del juego ${game.title}`} />
+              <div class="card-body">
+                <h5 class="card-title">{game.title}</h5>
+                <p class="card-text">{game.description}</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      ))}
+    </div>
+  </main>
+
+  <style>
+    .game-card {
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    a.card-link {
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</Layout>
