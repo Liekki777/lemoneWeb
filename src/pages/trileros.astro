@@ -1,54 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
+// 1. Importamos el nuevo componente interactivo (Isla de Astro)
+import TrilerosGame from '../components/TrilerosGame.jsx';
 ---
 
 <Layout title="Juego de Trileros">
   <main class="container py-4">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6">
-        <div class="card shadow-sm">
-          <div class="card-body text-center">
-            <h1 class="card-title mb-3">Juego de Trileros</h1>
-
-            <div id="score-board" class="mb-3">Puntuación: <span id="score">0</span> | Récord: <span id="high-score">0</span></div>
-
-            <div id="game-area" style="position:relative; height:240px;">
-              <div id="ball" class="ball"></div>
-
-              <div class="cup" id="cup0" onclick="guess(0)"></div>
-              <div class="cup" id="cup1" onclick="guess(1)"></div>
-              <div class="cup" id="cup2" onclick="guess(2)"></div>
-            </div>
-
-            <div id="message" class="mt-3">Dale a "Jugar" para empezar</div>
-
-            <button id="playBtn" class="btn btn-success mt-3" onclick="startGame()">Jugar</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- 2. Renderizamos el componente con una directiva de hidratación.
+         client:load asegura que el JS se cargue y ejecute tan pronto como la página es visible. -->
+    <TrilerosGame client:load />
   </main>
-
-  <style>
-    /* Estilos locales del juego, integrados con el layout Bootstrap del sitio */
-    #score-board{font-size:1.25rem}
-    #game-area{display:flex;align-items:flex-end;justify-content:center;gap:24px}
-
-    .ball{width:30px;height:30px;background:#f1c40f;border-radius:50%;position:absolute;bottom:30px;left:50%;transform:translateX(-50%);box-shadow:0 0 12px #f39c12;z-index:1;transition:transform .4s ease-in-out,opacity .2s;opacity:0}
-    .ball.visible{opacity:1}
-
-    .cup{width:90px;height:110px;background:linear-gradient(180deg,#e74c3c,#c0392b);position:absolute;bottom:30px;border-radius:6px 6px 0 0;cursor:pointer;z-index:10;border-bottom:6px solid #96281b;box-shadow:0 6px 18px rgba(0,0,0,.35);transition:transform .4s ease-in-out,bottom .4s;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:2rem;color:rgba(0,0,0,.15);user-select:none}
-
-    /* Posiciones iniciales centradas */
-    #cup0{left:50%;transform:translateX(calc(-140px - 50%))}
-    #cup1{left:50%;transform:translateX(-50%)}
-    #cup2{left:50%;transform:translateX(calc(140px - 50%))}
-
-    @media (max-width:576px){
-      .cup{width:70px;height:90px}
-      #game-area{gap:12px}
-    }
-  </style>
-
-  <script src="/scripts/trileros.js" defer></script>
 </Layout>
