@@ -1,164 +1,80 @@
 ---
 // src/components/Search.astro
 ---
-
-<!-- Botón bonito -->
-<button
-  class="btn btn-outline-light d-flex align-items-center gap-2"
-  type="button"
-  data-bs-toggle="modal"
-  data-bs-target="#customSearchModal"
->
-  <i class="bi bi-search"></i> <span class="d-none d-sm-inline">Buscar</span>
-</button>
-
 <!-- Modal con búsqueda personalizada -->
-<div class="modal fade" id="customSearchModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-    <div class="modal-content rounded-4 shadow-lg overflow-hidden" style="background-color: #ffffff !important;">
-      <div class="modal-header border-0 pb-0" style="background-color: #ffffff !important;">
-        <h5 class="modal-title fs-3 fw-bold" style="color: #1a1a1a !important;">Buscar en el blog</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body pt-2" style="background-color: #ffffff !important;">
-        <div class="search-container">
-          <input 
-            type="text" 
-            id="searchInput" 
-            class="form-control form-control-lg"
-            placeholder="Escribe para buscar..."
-            style="background-color: #ffffff; color: #1a1a1a; border: 1px solid #cccccc;"
-          />
-          <div id="searchResults" class="mt-3"></div>
-        </div>
+<div id="searchModalContainer" class="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 p-4 pt-[10vh] hidden" aria-labelledby="searchModalTitle" role="dialog" aria-modal="true">
+  <div id="searchModalContent" class="bg-white rounded-xl shadow-2xl w-full max-w-3xl flex flex-col max-h-[80vh] overflow-hidden">
+    <!-- Header -->
+    <div class="flex justify-between items-center p-5 border-b border-gray-200">
+      <h5 id="searchModalTitle" class="text-xl font-bold text-gray-900">Buscar en el blog</h5>
+      <button type="button" id="closeSearchModalBtn" class="text-3xl text-gray-500 hover:text-gray-800 leading-none" aria-label="Cerrar">
+        &times;
+      </button>
+    </div>
+    <!-- Body -->
+    <div class="p-5 flex-grow overflow-y-auto">
+      <div class="search-container">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="w-full p-3 text-lg border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          placeholder="Escribe para buscar..."
+        />
+        <div id="searchResults" class="mt-4 max-h-[55vh] overflow-y-auto grid md:grid-cols-2 gap-3 p-1"></div>
       </div>
     </div>
   </div>
 </div>
 
 <style is:global>
-  /* Contenedor de búsqueda */
-  .search-container {
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  #searchInput {
-    background-color: #ffffff !important;
-    color: #1a1a1a !important;
-    border: 2px solid #cccccc !important;
-    transition: border-color 0.2s;
-  }
-
+  /* Estilo para el resaltado de Pagefind que no se puede hacer con Tailwind */
   mark {
-  background-color: #ffea7a !important;
-  color: #1a1a1a !important;
-  padding: 0 3px;
-  border-radius: 3px;
-}
-
-
-  #searchInput:focus {
-    background-color: #ffffff !important;
-    color: #1a1a1a !important;
-    border-color: #0d6efd !important;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-  }
-
-  /* Lista de resultados */
-  #searchResults {
-    max-height: 56vh;
-    overflow-y: auto;
-    display: grid;
-    gap: 0.75rem;
-    grid-template-columns: 1fr;
-    padding: 0.25rem 0;
-    -webkit-overflow-scrolling: touch;
-  }
-.search-result {
-  background-color: #ffffff !important;
-  color: #1a1a1a !important;
-  border: 1px solid #e9ecef;
-  border-radius: 12px;
-  padding: 14px;
-  display: block;
-  text-decoration: none;
-  transition: transform 160ms ease, box-shadow 160ms ease;
-  box-shadow: 0 1px 0 rgba(16,24,40,0.02);
-}
-
-.search-result:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(2,6,23,0.08);
-}
-
-.search-result-title {
-  color: #0d6efd !important;
-  font-weight: 700;
-  margin-bottom: 6px;
-  font-size: 1.05rem;
-}
-
-.search-result-excerpt {
-  color: #444444 !important;
-  margin: 0;
-}
-
-/* meta, fecha u otros */
-.search-result-meta {
-  font-size: 12px;
-  color: #7a7a7a;
-  margin-top: 8px;
-}
-
-  
-
-  .search-result:hover {
-    background-color: #f0f0f0;
-    border-color: #0d6efd;
-    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
-    transform: translateY(-2px);
-  }
-
- 
-  .search-result-excerpt {
-    color: #444444 !important;
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-
-  .search-empty {
-    text-align: center;
-    color: #999999;
-    padding: 2rem 1rem;
-  }
-
-  .search-loading {
-    text-align: center;
-    color: #0d6efd;
-    padding: 1rem;
+    background-color: #ffea7a;
+    color: #1a1a1a;
+    padding: 0 3px;
+    border-radius: 3px;
   }
 
   /* Scrollbar sutil */
   #searchResults::-webkit-scrollbar { height: 8px; width: 8px; }
   #searchResults::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 8px; }
   #searchResults::-webkit-scrollbar-track { background: transparent; }
-
-  /* Grid en pantallas grandes: 2 columnas */
-  @media(min-width: 768px) {
-    #searchResults { grid-template-columns: 1fr 1fr; }
-  }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', async () => {
+    // --- Modal Control ---
+    const searchModalContainer = document.getElementById('searchModalContainer');
+    const closeSearchModalBtn = document.getElementById('closeSearchModalBtn');
+    const searchBtnDesktop = document.getElementById('searchBtnDesktop');
+    const searchBtnMobile = document.getElementById('searchBtnMobile');
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
-    const modalEl = document.getElementById('customSearchModal');
 
-    if (!searchInput || !searchResults) return;
+    if (!searchModalContainer || !searchInput || !searchResults) return;
+
+    const openModal = () => {
+      searchModalContainer.classList.remove('hidden');
+      setTimeout(() => (searchInput as HTMLInputElement).focus(), 50);
+    };
+
+    const closeModal = () => {
+      searchModalContainer.classList.add('hidden');
+    };
+
+    searchBtnDesktop?.addEventListener('click', openModal);
+    searchBtnMobile?.addEventListener('click', openModal);
+    closeSearchModalBtn?.addEventListener('click', closeModal);
+    searchModalContainer.addEventListener('click', (e) => {
+      if (e.target === searchModalContainer) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !searchModalContainer.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+
+    // --- Pagefind Search Logic ---
 
     try {
       // Cargar el bundle de Pagefind en tiempo de ejecución sin que Vite lo procese
@@ -167,7 +83,7 @@
       const search: any = mod?.search;
       if (!search) {
         console.error('Pagefind no disponible');
-        searchResults.innerHTML = '<div class="search-empty">Error al cargar el buscador</div>';
+        searchResults.innerHTML = '<div class="text-center text-red-500 p-8 col-span-full">Error al cargar el buscador</div>';
         return;
       }
 
@@ -181,11 +97,11 @@
       }
 
       const doSearch = async (query: string) => {
-        searchResults.innerHTML = '<div class="search-loading">Buscando...</div>';
+        searchResults.innerHTML = '<div class="text-center text-blue-600 p-8 col-span-full">Buscando...</div>';
         try {
           const results = await search(query);
           if (!results || !results.results || results.results.length === 0) {
-            searchResults.innerHTML = `<div class="search-empty">No se encontraron resultados para: <strong>${query}</strong></div>`;
+            searchResults.innerHTML = `<div class="text-center text-gray-500 p-8 col-span-full">No se encontraron resultados para: <strong class="font-semibold text-gray-700">${query}</strong></div>`;
             return;
           }
 
@@ -194,24 +110,24 @@
             const data = await result.data();
             const link = document.createElement('a');
             link.href = data.url;
-            link.className = 'search-result';
+            link.className = 'block p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-150';
             link.innerHTML = `
-              <div class="search-result-title">${data.meta.title || 'Sin título'}</div>
-              <div class="search-result-excerpt">${data.excerpt || 'Sin descripción disponible'}</div>
-              ${data.meta && data.meta.date ? `<div class="search-result-meta">${new Date(data.meta.date).toLocaleDateString('es-ES')}</div>` : ''}
+              <div class="font-bold text-blue-600 mb-1.5">${data.meta.title || 'Sin título'}</div>
+              <div class="text-gray-700 text-sm leading-relaxed">${data.excerpt || 'Sin descripción disponible'}</div>
+              ${data.meta && data.meta.date ? `<div class="text-xs text-gray-500 mt-2">${new Date(data.meta.date).toLocaleDateString('es-ES')}</div>` : ''}
             `;
             searchResults.appendChild(link);
           }
         } catch (err) {
           console.error('Error en búsqueda:', err);
-          searchResults.innerHTML = '<div class="search-empty">Error al realizar la búsqueda</div>';
+          searchResults.innerHTML = '<div class="text-center text-red-500 p-8 col-span-full">Error al realizar la búsqueda</div>';
         }
       };
 
       const handler = debounce((e: Event) => {
         const query = ((e.target as HTMLInputElement).value || '').trim();
         if (query.length < 2) {
-          searchResults.innerHTML = '<div class="search-empty">Escribe al menos 2 caracteres para buscar</div>';
+          searchResults.innerHTML = '<div class="text-center text-gray-500 p-8 col-span-full">Escribe al menos 2 caracteres para buscar</div>';
           return;
         }
         void doSearch(query);
@@ -219,18 +135,11 @@
 
       searchInput.addEventListener('input', handler);
 
-      // Focus input when modal opens (Bootstrap event)
-      if (modalEl) {
-        modalEl.addEventListener('shown.bs.modal', () => {
-          setTimeout(() => searchInput.focus(), 50);
-        });
-      }
-
       // Iniciar con mensaje
-      searchResults.innerHTML = '<div class="search-empty">Escribe para buscar en el blog</div>';
+      searchResults.innerHTML = '<div class="text-center text-gray-500 p-8 col-span-full">Escribe para buscar en el blog</div>';
     } catch (error) {
       console.error('Error cargando Pagefind:', error);
-      searchResults.innerHTML = '<div class="search-empty">Error al cargar el buscador</div>';
+      searchResults.innerHTML = '<div class="text-center text-red-500 p-8 col-span-full">Error al cargar el buscador</div>';
     }
   });
 </script>

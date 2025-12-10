@@ -1,8 +1,8 @@
 --- 
 title: Mi primer post con Astro 
-description: Probando lo f�cil que es tener un blog 
+description: Probando lo fácil que es tener un blog 
 pubDate: 2025-03-25 
-author: T� 
+author: Tú 
 tags: [astro, blog] 
 --- 
  

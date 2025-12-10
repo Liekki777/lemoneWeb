@@ -5,14 +5,12 @@ import products from '../../data/products.json';
 ---
 
 <Layout title="Tienda">
-  <div class="container py-5">
-    <h1 class="mb-4">Tienda</h1>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+  <main class="container mx-auto px-4 py-12">
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-10 text-center">Nuestra Tienda</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {products.map(product => (
-        <div class="col">
-          <ProductCard product={product} />
-        </div>
+        <ProductCard product={product} />
       ))}
     </div>
-  </div>
+  </main>
 </Layout>

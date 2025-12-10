@@ -2,7 +2,8 @@
 import { useState, useEffect, useMemo } from 'preact/hooks';
 
 const HIGH_SCORE_KEY = 'trilerosHighScore';
-const SPACING = 140;
+// Hacemos el espaciado responsive para una mejor experiencia móvil.
+const getSpacing = () => (typeof window !== 'undefined' && window.innerWidth < 576 ? 100 : 140);
 
 const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
@@ -10,7 +11,8 @@ export default function TrilerosGame() {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [message, setMessage] = useState('Dale a "Jugar" para empezar');
-  const [messageColor, setMessageColor] = useState('black');
+  // Cambiamos el estado para usar clases de Tailwind directamente.
+  const [messageColorClass, setMessageColorClass] = useState('text-gray-800');
   const [isPlaying, setIsPlaying] = useState(false);
   const [buttonText, setButtonText] = useState('Jugar');
   const [canGuess, setCanGuess] = useState(false);
@@ -19,21 +21,30 @@ export default function TrilerosGame() {
   const [cupPositions, setCupPositions] = useState([0, 1, 2]);
   const [isBallVisible, setIsBallVisible] = useState(false);
   const [liftedCups, setLiftedCups] = useState([false, false, false]);
+  const [spacing, setSpacing] = useState(getSpacing());
 
   useEffect(() => {
     setHighScore(Number(localStorage.getItem(HIGH_SCORE_KEY) || 0));
+
+    const handleResize = () => setSpacing(getSpacing());
+    window.addEventListener('resize', handleResize);
+    // Limpieza al desmontar el componente
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const cupStyles = useMemo(() => 
     cupPositions.map((pos, index) => ({
-      transform: `translateX(calc(${(pos - 1) * SPACING}px - 50%))`,
+      // Usamos el estado 'spacing' para la responsividad
+      transform: `translateX(calc(${(pos - 1) * spacing}px - 50%))`,
       bottom: liftedCups[index] ? '80px' : '30px',
-    })), [cupPositions, liftedCups]);
+    })), [cupPositions, liftedCups, spacing]);
 
   const ballStyle = useMemo(() => ({
-    transform: `translateX(calc(${(ballPosition - 1) * SPACING}px - 50%))`,
+    // Usamos el estado 'spacing' para la responsividad
+    transform: `translateX(calc(${(ballPosition - 1) * spacing}px - 50%))`,
     opacity: isBallVisible ? 1 : 0,
-  }), [ballPosition, isBallVisible]);
+    // La posición 'bottom' ahora está en las clases de Tailwind
+  }), [ballPosition, isBallVisible, spacing]);
 
   async function liftAllCups(up) {
     setLiftedCups([up, up, up]);
@@ -45,7 +56,7 @@ export default function TrilerosGame() {
     setIsPlaying(true);
     setCanGuess(false);
     setMessage('¡Atento!');
-    setMessageColor('black');
+    setMessageColorClass('text-gray-800');
 
     setCupPositions([0, 1, 2]);
     setBallPosition(1);
@@ -102,7 +113,7 @@ export default function TrilerosGame() {
     if (visualPosOfClickedCup === ballPosition) {
       setIsBallVisible(true);
       setMessage('¡Correcto! +1 Punto');
-      setMessageColor('#198754');
+      setMessageColorClass('text-green-600');
       const newScore = score + 1;
       setScore(newScore);
       if (newScore > highScore) {
@@ -111,7 +122,7 @@ export default function TrilerosGame() {
       }
     } else {
       setMessage('¡Fallaste! Puntos a 0');
-      setMessageColor('#dc3545');
+      setMessageColorClass('text-red-600');
       setScore(0);
       const winningCupIndex = cupPositions.indexOf(ballPosition);
       if (winningCupIndex !== -1) {
@@ -131,35 +142,36 @@ export default function TrilerosGame() {
   }
 
   return (
-    <>
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-              <h1 class="card-title mb-3">Juego de Trileros</h1>
-              <div class="mb-3" style={{ fontSize: '1.25rem' }}>
-                Puntuación: <span>{score}</span> | Récord: <span>{highScore}</span>
-              </div>
-              <div style={{ position: 'relative', height: '240px' }}>
-                <div class="ball" style={ballStyle}></div>
-                {[0, 1, 2].map(index => (
-                  <div key={index} class="cup" style={cupStyles[index]} onClick={() => handleGuess(index)} />
-                ))}
-              </div>
-              <div class="mt-3" style={{ color: messageColor }}>{message}</div>
-              <button class="btn btn-success mt-3" onClick={startGame} disabled={isPlaying}>
-                {buttonText}
-              </button>
+    <div class="flex justify-center">
+      <div class="w-full max-w-2xl">
+        <div class="bg-white rounded-xl shadow-lg">
+          <div class="p-6 text-center">
+            <h1 class="text-2xl sm:text-3xl font-bold mb-4">Juego de Trileros</h1>
+            <div class="mb-4 text-xl">
+              Puntuación: <span class="font-bold">{score}</span> | Récord: <span class="font-bold">{highScore}</span>
             </div>
+            {/* Contenedor del juego con altura fija y overflow controlado */}
+            <div class="relative h-60 overflow-x-clip">
+              <div
+                className="absolute left-1/2 bottom-[30px] z-10 w-[30px] h-[30px] bg-yellow-400 rounded-full shadow-[0_0_12px_#f39c12] transition-opacity duration-200"
+                style={ballStyle}
+              ></div>
+              {[0, 1, 2].map(index => (
+                <div
+                  key={index}
+                  className="absolute left-1/2 z-20 w-[70px] h-[90px] sm:w-[90px] sm:h-[110px] bg-gradient-to-b from-red-500 to-red-700 rounded-t-md cursor-pointer border-b-[6px] border-red-900 shadow-xl select-none transition-all duration-400 ease-in-out"
+                  style={cupStyles[index]}
+                  onClick={() => handleGuess(index)}
+                />
+              ))}
+            </div>
+            <div className={`mt-4 font-semibold ${messageColorClass}`}>{message}</div>
+            <button className="mt-4 px-5 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" onClick={startGame} disabled={isPlaying}>
+              {buttonText}
+            </button>
           </div>
         </div>
       </div>
-      <style>{`
-        .ball { width:30px; height:30px; background:#f1c40f; border-radius:50%; position:absolute; bottom:30px; left:50%; box-shadow:0 0 12px #f39c12; z-index:1; transition:transform .4s ease-in-out, opacity .2s; }
-        .cup { width:90px; height:110px; background:linear-gradient(180deg,#e74c3c,#c0392b); position:absolute; border-radius:6px 6px 0 0; cursor:pointer; z-index:10; border-bottom:6px solid #96281b; box-shadow:0 6px 18px rgba(0,0,0,.35); transition:transform .4s ease-in-out, bottom .4s; user-select:none; left: 50%; }
-        @media (max-width:576px){ .cup{width:70px;height:90px} }
-      `}</style>
-    </>
+    </div>
   );
 }
-
