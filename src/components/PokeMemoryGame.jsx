@@ -8,7 +8,7 @@ const shuffleArray = (array) => {
 
 export default function PokeMemoryGame() {
   const [cards, setCards] = useState([]);
-  const [gameState, setGameState] = useState('idle'); // 'idle', 'playing', 'won'
+  const [gameState, setGameState] = useState('idle'); // 'idle', 'loading', 'playing', 'won'
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchedIds, setMatchedIds] = useState(new Set());
   const [turns, setTurns] = useState(0);
@@ -51,6 +51,11 @@ export default function PokeMemoryGame() {
     }
   };
 
+  // Iniciar el juego al cargar el componente
+  useEffect(() => {
+    // No iniciar automáticamente, esperar al botón "JUGAR"
+  }, []);
+
   useEffect(() => {
     if (flippedCards.length === 2) {
       setIsChecking(true);
@@ -58,12 +63,10 @@ export default function PokeMemoryGame() {
       const [firstCard, secondCard] = flippedCards;
 
       if (firstCard.id === secondCard.id) {
-        // Es una coincidencia
         setMatchedIds(prev => new Set(prev).add(firstCard.id));
-        setFlippedCards([]); // Limpia las cartas volteadas para el siguiente turno
+        setFlippedCards([]);
         setIsChecking(false);
       } else {
-        // No es una coincidencia, voltear de nuevo
         setTimeout(() => {
           setFlippedCards([]);
           setIsChecking(false);
@@ -72,7 +75,6 @@ export default function PokeMemoryGame() {
     }
   }, [flippedCards]);
   
-  // Comprobar si se ha ganado
   useEffect(() => {
     if (matchedIds.size === POKEMON_COUNT && gameState === 'playing') {
       setGameState('won');
@@ -80,12 +82,10 @@ export default function PokeMemoryGame() {
   }, [matchedIds]);
 
   const handleCardClick = (clickedCard) => {
-    // No hacer nada si se está comprobando, si la carta ya es un par, o si ya hay 2 cartas seleccionadas
     if (isChecking || matchedIds.has(clickedCard.id) || flippedCards.length === 2 || flippedCards.some(c => c.uniqueId === clickedCard.uniqueId)) {
       return;
     }
     
-    // Añadir la carta a las volteadas
     setFlippedCards([...flippedCards, clickedCard]);
   };
 
@@ -130,7 +130,7 @@ export default function PokeMemoryGame() {
             </div>
           )}
 
-          <div class={`grid grid-cols-4 md:grid-cols-8 gap-3 sm:gap-4 w-full max-w-4xl [perspective:1000px] ${gameState === 'won' ? 'opacity-50 pointer-events-none' : ''}`}>
+          <div class={`grid grid-cols-4 gap-4 w-full max-w-xl [perspective:1000px] ${gameState === 'won' ? 'opacity-50 pointer-events-none' : ''}`}>
             {cards.map((card) => {
               const isFlipped = flippedCards.some(c => c.uniqueId === card.uniqueId) || matchedIds.has(card.id);
 
