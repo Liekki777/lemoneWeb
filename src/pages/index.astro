@@ -8,17 +8,58 @@ const posts = (await getCollection('blog'))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
   .slice(0, 3); // Solo los 3 más nuevos
 ---
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const heroSection = document.querySelector('.hero-section');
+    const heroTitleSpans = heroSection?.querySelectorAll('.hero-title span');
+    const heroSubtitleSpans = heroSection?.querySelectorAll('.hero-subtitle span');
+    const heroButton = heroSection?.querySelector('.hero-button');
+    const heroImageRight = heroSection?.querySelector('.hero-image-right');
+    const heroImageLeft = heroSection?.querySelector('.hero-image-left');
+
+    if (heroTitleSpans && heroSubtitleSpans && heroButton && heroImageRight && heroImageLeft) {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroSection,
+          start: 'top center', // Inicia la animación cuando la parte superior de la sección llega al centro de la ventana
+          // markers: true, // Descomentar para depuración
+        }
+      });
+
+      tl.to(heroTitleSpans, { opacity: 1, y: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out' })
+        .to(heroSubtitleSpans, { opacity: 1, y: 0, duration: 0.7, stagger: 0.05, ease: 'power3.out' }, '-=0.6')
+        .to(heroImageRight, { opacity: 1, x: '-10%', duration: 1.2, ease: 'power3.out' }, '-=0.7') // Entra desde la derecha con margen
+        .to(heroImageLeft, { opacity: 1, x: '10%', scaleX: -1, duration: 1.2, ease: 'power3.out' }, '<') // Entra desde la izquierda, volteada y con margen
+        .to(heroButton, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=1');
+    }
+  });
+</script>
 
 <Layout title="LEMONE">
   <!-- Hero brutal -->
-  <section class="bg-blue-600 text-white">
-    <div class="container mx-auto px-4 py-20 text-center">
-      <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight">¡Bienvenido a mi blog!</h1>
-      <p class="mt-4 mb-8 text-xl md:text-2xl max-w-3xl mx-auto">Artículos frescos, rápidos y con mucho amor</p>
-      <a href="/blog" class="inline-block bg-white text-blue-700 font-bold text-lg px-8 py-4 rounded-lg shadow-lg hover:bg-gray-100 transition-transform transform hover:scale-105">
+  <section class="hero-section bg-gradient-to-br from-amber-800 to-amber-900 text-white overflow-hidden relative">
+    <div class="container mx-auto px-4 py-20 text-center relative z-10">
+      <h1 class="hero-title text-5xl md:text-6xl font-extrabold tracking-tight">
+        {"¡Bienvenido a Lemoné!".split(' ').map((word) => (
+          <span class="inline-block opacity-0 translate-y-full">{word}&nbsp;</span>
+        ))}
+      </h1>
+      <p class="hero-subtitle mt-4 mb-8 text-xl md:text-2xl max-w-3xl mx-auto">
+        {"Artículos frescos, rápidos y con mucho amor".split(' ').map((word) => (
+          <span class="inline-block opacity-0 translate-y-full">{word}&nbsp;</span>
+        ))}
+      </p>
+      <a href="/blog" class="hero-button inline-block bg-white text-blue-700 font-bold text-lg px-8 py-4 rounded-lg shadow-lg hover:bg-gray-100 transition-transform transform hover:scale-105 opacity-0 translate-y-8">
         Ir al Blog →
       </a>
     </div>
+    <img src="/images/lemoneBanana.png" alt="Lemone Banana" class="hero-image-right absolute bottom-0 right-0 w-1/2 max-w-xs opacity-0 translate-x-full z-0" />
+    <img src="/images/lemoneBanana.png" alt="Lemone Banana" class="hero-image-left absolute bottom-0 left-0 w-1/2 max-w-xs opacity-0 -translate-x-full z-0" />
   </section>
 
   <!-- Últimos posts -->
