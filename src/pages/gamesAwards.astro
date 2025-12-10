@@ -1,0 +1,164 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Venta de Entradas - Games Awards">
+  <main class="container mx-auto px-4 py-12">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Games Awards 2025</h1>
+      <p class="text-lg text-gray-600">¡Asegura tu sitio en el evento de gaming del año!</p>
+    </header>
+
+    <div class="max-w-4xl mx-auto">
+      <div id="purchase-feedback"></div>
+      <div id="ticket-container" class="space-y-6">
+        <!-- Las entradas se renderizarán aquí por JS -->
+      </div>
+
+      <div class="mt-10 bg-white rounded-xl shadow-lg p-6 text-right">
+        <p class="text-2xl font-bold">Total: <span id="total-price" class="text-blue-600">€0.00</span></p>
+        <button id="checkout-button" class="mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          Comprar Ahora
+        </button>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const ticketData = [
+      { id: 'vip', name: 'Entrada VIP', price: 150.00, stock: 10, description: 'Acceso preferente, asientos en primeras filas y pack de merchandising.' },
+      { id: 'general', name: 'Entrada General', price: 75.00, stock: 100, description: 'Acceso al evento y asiento general.' },
+      { id: 'early-bird', name: 'Early Bird', price: 50.00, stock: 0, description: '¡Agotadas! Acceso general a un precio reducido.' }
+    ];
+
+    let ticketState = ticketData.map(ticket => ({ ...ticket, quantity: 0 }));
+
+    const container = document.getElementById('ticket-container');
+    const totalPriceEl = document.getElementById('total-price');
+    const checkoutButton = document.getElementById('checkout-button');
+
+    let isInitialRender = true;
+
+    function renderTickets() {
+      if (!container || !totalPriceEl || !checkoutButton) return;
+
+      container.innerHTML = '';
+      let totalPrice = 0;
+
+      ticketState.forEach((ticket, index) => {
+        totalPrice += ticket.price * ticket.quantity;
+
+        const isSoldOut = ticket.stock === 0;
+        const canIncrease = ticket.quantity < ticket.stock;
+
+        const ticketEl = document.createElement('div');
+        const initialAnimationClasses = isInitialRender ? 'opacity-0 translate-y-5' : '';
+        ticketEl.className = `ticket-card bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6 ${isSoldOut ? 'opacity-60' : ''} ${initialAnimationClasses}`;
+        ticketEl.innerHTML = `
+          <div class="flex-grow">
+            <h3 class="text-2xl font-bold text-gray-800">${ticket.name}</h3>
+            <p class="text-gray-600 mt-1">${ticket.description}</p>
+            <p class="text-lg font-semibold text-blue-600 mt-2">€${ticket.price.toFixed(2)}</p>
+          </div>
+          <div class="flex-shrink-0 flex items-center gap-4">
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-500">Stock</div>
+              <div class="text-lg font-bold ${isSoldOut ? 'text-red-500' : 'text-gray-800'}">${ticket.stock}</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button data-index="${index}" data-action="decrease" class="w-10 h-10 flex items-center justify-center text-xl font-bold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${ticket.quantity === 0 || isSoldOut ? 'disabled' : ''}>-</button>
+              <span class="w-12 text-center text-xl font-bold">${ticket.quantity}</span>
+              <button data-index="${index}" data-action="increase" class="w-10 h-10 flex items-center justify-center text-xl font-bold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${!canIncrease || isSoldOut ? 'disabled' : ''}>+</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(ticketEl);
+      });
+
+      totalPriceEl.textContent = `€${totalPrice.toFixed(2)}`;
+      checkoutButton.disabled = totalPrice === 0;
+
+      if (isInitialRender) {
+        const cards = gsap.utils.toArray('.ticket-card');
+        if (cards.length > 0) {
+          gsap.to(cards, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            stagger: 0.15,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: container,
+              start: 'top 85%',
+            }
+          });
+        }
+        isInitialRender = false;
+      }
+    }
+
+    function handleAction(e: Event) {
+      const target = e.target as HTMLElement;
+      const button = target.closest('button');
+
+      if (!button) return;
+
+      const index = parseInt(button.dataset.index || '-1');
+      const action = button.dataset.action;
+
+      if (index === -1 || !action) return;
+
+      const ticket = ticketState[index];
+
+      if (action === 'increase' && ticket.quantity < ticket.stock) {
+        ticketState[index].quantity++;
+      } else if (action === 'decrease' && ticket.quantity > 0) {
+        ticketState[index].quantity--;
+      }
+
+      renderTickets();
+    }
+
+    function handleCheckout() {
+      const total = ticketState.reduce((acc, ticket) => acc + (ticket.price * ticket.quantity), 0);
+      if (total === 0) return;
+
+      // Update stock and reset quantities
+      ticketState = ticketState.map(ticket => ({
+        ...ticket,
+        stock: ticket.stock - ticket.quantity,
+        quantity: 0,
+      }));
+
+      // Re-render tickets to show updated stock
+      renderTickets();
+
+      // Show success message
+      const feedbackEl = document.getElementById('purchase-feedback');
+      if (feedbackEl) {
+        feedbackEl.innerHTML = `
+          <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-6" role="alert">
+            <p class="font-bold">¡Compra realizada con éxito!</p>
+            <p>El stock ha sido actualizado. ¡Gracias!</p>
+          </div>
+        `;
+        gsap.fromTo(feedbackEl, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5 });
+
+        setTimeout(() => {
+          gsap.to(feedbackEl, { opacity: 0, duration: 0.5, onComplete: () => { feedbackEl.innerHTML = ''; } });
+        }, 5000);
+      }
+    }
+
+    container?.addEventListener('click', handleAction);
+    checkoutButton?.addEventListener('click', handleCheckout);
+    renderTickets();
+  });
+</script>
