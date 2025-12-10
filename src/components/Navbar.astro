@@ -18,6 +18,7 @@ import Search from './Search.astro';
       <a href="/noticias" class="text-white text-lg hover:text-gray-300 transition-colors">Noticias</a>
       <a href="/tienda" class="text-white text-lg hover:text-gray-300 transition-colors">Tienda</a>
       <a href="/juegos" class="text-white text-lg hover:text-gray-300 transition-colors">Juegos</a>
+      <a href="/dashboard" class="text-white text-lg hover:text-gray-300 transition-colors">Dashboard</a>
         <button type="button" id="cartBtnDesktop" class="relative text-white p-0" aria-label="Abrir carrito">
           <i class="bi bi-cart text-xl"></i>
           <span id="cart-count" class="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full" style="display:none;">0</span>
@@ -74,6 +75,10 @@ import Search from './Search.astro';
     <i class="bi bi-controller text-2xl"></i>
     <span class="block text-[11px] leading-none">Juegos</span>
   </a>
+  <a href="/dashboard" class="flex flex-col items-center text-white text-xs no-underline hover:text-gray-300 transition-colors" aria-label="Dashboard">
+    <i class="bi bi-grid-1x2 text-2xl"></i>
+    <span class="block text-[11px] leading-none">Dashboard</span>
+  </a>
 </nav>
 
 <!-- MODAL DE BÚSQUEDA (siempre en el DOM → Pagefind lo detecta) -->
@@ -98,6 +103,7 @@ import Search from './Search.astro';
       <a href="/noticias" class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors">Noticias</a>
       <a href="/tienda" class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors">Tienda</a>
       <a href="/juegos" class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors">Juegos</a>
+      <a href="/dashboard" class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors">Dashboard</a>
     </div>
   </div>
 </div>

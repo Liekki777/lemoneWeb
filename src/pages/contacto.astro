@@ -1,0 +1,124 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contacto">
+  <main class="container mx-auto px-4 py-12">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Contacto</h1>
+      <p class="text-lg text-gray-600">¿Tienes alguna pregunta? ¡No dudes en contactarnos!</p>
+    </header>
+
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+      <form id="contactForm" novalidate>
+        <div id="formFeedback" class="hidden"></div>
+        
+        <div class="mb-6 form-field opacity-0 translate-y-5">
+          <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
+          <input type="text" id="name" name="name" required class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p class="text-red-500 text-xs italic hidden error-message mt-1">El nombre es obligatorio.</p>
+        </div>
+
+        <div class="mb-6 form-field opacity-0 translate-y-5">
+          <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+          <input type="email" id="email" name="email" required class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p class="text-red-500 text-xs italic hidden error-message mt-1">Por favor, introduce un email válido.</p>
+        </div>
+
+        <div class="mb-6 form-field opacity-0 translate-y-5">
+          <label for="subject" class="block text-gray-700 text-sm font-bold mb-2">Asunto</label>
+          <input type="text" id="subject" name="subject" required class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+           <p class="text-red-500 text-xs italic hidden error-message mt-1">El asunto es obligatorio.</p>
+        </div>
+
+        <div class="mb-6 form-field opacity-0 translate-y-5">
+          <label for="message" class="block text-gray-700 text-sm font-bold mb-2">Mensaje</label>
+          <textarea id="message" name="message" rows="5" required class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+           <p class="text-red-500 text-xs italic hidden error-message mt-1">El mensaje es obligatorio.</p>
+        </div>
+
+        <div class="text-right form-field opacity-0 translate-y-5">
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200">
+            Enviar Mensaje
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('contactForm') as HTMLFormElement;
+    const formFeedback = document.getElementById('formFeedback');
+
+    if (!form || !formFeedback) return;
+
+    const validateEmail = (email: string) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(String(email).toLowerCase());
+
+    const showFeedback = (message: string, isError: boolean) => {
+      formFeedback.textContent = message;
+      formFeedback.className = `p-4 rounded-md mb-6 ${isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
+    };
+
+    const validateField = (input: HTMLInputElement | HTMLTextAreaElement, condition: boolean, errorMsgElement: Element | null) => {
+      if (condition) {
+        input.classList.add('border-red-500');
+        errorMsgElement?.classList.remove('hidden');
+        return false;
+      }
+      return true;
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      form.querySelectorAll('.error-message').forEach(el => el.classList.add('hidden'));
+      form.querySelectorAll('input, textarea').forEach(el => el.classList.remove('border-red-500'));
+
+      const name = form.querySelector('#name') as HTMLInputElement;
+      const email = form.querySelector('#email') as HTMLInputElement;
+      const subject = form.querySelector('#subject') as HTMLInputElement;
+      const message = form.querySelector('#message') as HTMLTextAreaElement;
+
+      let isValid = true;
+      isValid = validateField(name, name.value.trim() === '', name.nextElementSibling) && isValid;
+      isValid = validateField(email, !validateEmail(email.value), email.nextElementSibling) && isValid;
+      isValid = validateField(subject, subject.value.trim() === '', subject.nextElementSibling) && isValid;
+      isValid = validateField(message, message.value.trim() === '', message.nextElementSibling) && isValid;
+
+      if (isValid) {
+        showFeedback('¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.', false);
+        form.reset();
+      } else {
+        showFeedback('Por favor, corrige los errores marcados en el formulario.', true);
+      }
+    });
+  });
+</script>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const formContainer = document.querySelector('#contactForm');
+    const formFields = gsap.utils.toArray('.form-field');
+
+    if (formContainer && formFields.length > 0) {
+      gsap.to(formFields, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: formContainer,
+          start: 'top 85%', // Inicia la animación un poco antes de que el formulario esté completamente visible
+        }
+      });
+    }
+  });
+</script>

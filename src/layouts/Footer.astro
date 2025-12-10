@@ -1,0 +1,49 @@
+---
+// src/components/Footer.astro
+---
+<footer class="bg-gray-900 text-gray-300">
+  <div class="container mx-auto px-4 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <!-- Columna 1: Navegación -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Navegación</h3>
+        <ul class="space-y-2">
+          <li><a href="/" class="hover:text-white transition-colors">Inicio</a></li>
+          <li><a href="/blog" class="hover:text-white transition-colors">Blog</a></li>
+          <li><a href="/tienda" class="hover:text-white transition-colors">Tienda</a></li>
+          <li><a href="/juegos" class="hover:text-white transition-colors">Juegos</a></li>
+        </ul>
+      </div>
+      <!-- Columna 2: Recursos -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Recursos</h3>
+        <ul class="space-y-2">
+          <li><a href="/guias" class="hover:text-white transition-colors">Guías</a></li>
+          <li><a href="/destacado" class="hover:text-white transition-colors">Destacado</a></li>
+          <li><a href="/noticias" class="hover:text-white transition-colors">Noticias</a></li>
+          <li><a href="/dashboard" class="hover:text-white transition-colors font-bold">Dashboard</a></li>
+        </ul>
+      </div>
+      <!-- Columna 3: Legal (placeholders) -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Legal</h3>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-white transition-colors">Política de Privacidad</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Términos de Uso</a></li>
+        </ul>
+      </div>
+      <!-- Columna 4: Social (placeholders) -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Síguenos</h3>
+        <div class="flex space-x-4">
+          <a href="#" aria-label="Twitter" class="hover:text-white transition-colors"><i class="bi bi-twitter text-xl"></i></a>
+          <a href="#" aria-label="Instagram" class="hover:text-white transition-colors"><i class="bi bi-instagram text-xl"></i></a>
+          <a href="#" aria-label="YouTube" class="hover:text-white transition-colors"><i class="bi bi-youtube text-xl"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="mt-12 border-t border-gray-800 pt-8 text-center text-gray-500">
+      <p>Hecho con ❤️ y Astro + Tailwind CSS</p>
+    </div>
+  </div>
+</footer>

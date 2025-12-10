@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+
+// 1. Total de posts
+const totalPosts = allPosts.length;
+
+// 2. Conteo de posts por etiqueta
+const tagsCount = new Map<string, number>();
+allPosts.forEach(post => {
+  post.data.tags.forEach(tag => {
+    tagsCount.set(tag, (tagsCount.get(tag) || 0) + 1);
+  });
+});
+
+// Convertir el mapa a un array y ordenarlo
+const sortedTags = Array.from(tagsCount.entries()).sort((a, b) => b[1] - a[1]);
+
+// 3. Post más reciente y más antiguo
+const sortedByDate = allPosts.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const latestPost = sortedByDate[0];
+const oldestPost = sortedByDate[sortedByDate.length - 1];
+---
+
+<Layout title="Dashboard del Contenido">
+  <main class="container mx-auto px-4 py-12">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Dashboard del Contenido</h1>
+      <p class="text-lg text-gray-600">Una vista general de las estadísticas del blog.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Widget: Total Posts -->
+      <div class="dashboard-widget bg-white rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center opacity-0 translate-y-5">
+        <dt class="text-sm font-medium text-gray-500 truncate">Total de Artículos</dt>
+        <dd class="mt-1 text-5xl font-extrabold text-blue-600">{totalPosts}</dd>
+      </div>
+
+      <!-- Widget: Total Tags -->
+      <div class="dashboard-widget bg-white rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center opacity-0 translate-y-5">
+        <dt class="text-sm font-medium text-gray-500 truncate">Etiquetas Únicas</dt>
+        <dd class="mt-1 text-5xl font-extrabold text-green-600">{sortedTags.length}</dd>
+      </div>
+
+      <!-- Widget: Distribución de Etiquetas -->
+      <div class="dashboard-widget bg-white rounded-xl shadow-lg p-6 md:col-span-2 lg:col-span-1 opacity-0 translate-y-5">
+        <h3 class="font-semibold text-gray-800 mb-4">Top Etiquetas</h3>
+        <ul class="space-y-3">
+          {sortedTags.slice(0, 5).map(([tag, count]) => (
+            <li class="flex items-center justify-between">
+              <span class="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full">{tag}</span>
+              <span class="font-bold text-gray-700">{count} {count > 1 ? 'posts' : 'post'}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const widgets = gsap.utils.toArray('.dashboard-widget');
+
+    if (widgets.length > 0) {
+      gsap.to(widgets, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.grid', // El contenedor de los widgets
+          start: 'top 80%', // Inicia cuando el 80% superior del grid es visible
+        }
+      });
+    }
+  });
+</script>

@@ -4,6 +4,7 @@ export interface Props {
 }
 const { title } = Astro.props;
 import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
 ---
 import '../styles/global.css';
 
@@ -20,6 +21,7 @@ import '../styles/global.css';
 <body class="bg-slate-100 text-slate-800 min-h-screen">
   <Navbar />
   <slot />
+  <Footer />
       <script src="/scripts/cart-store.js" defer></script>
 </body>
 </html>
