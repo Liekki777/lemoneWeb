@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build",
     "preview": "astro preview",
     "preview:search": "npm run build && xcopy /E /I /Y dist\\pagefind public\\pagefind && npm run preview"
   },
