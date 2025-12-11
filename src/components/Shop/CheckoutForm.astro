@@ -31,12 +31,8 @@
       if (!form) return;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-        const nameEl = document.getElementById('c_name');
-        const emailEl = document.getElementById('c_email');
-        const name = nameEl ? (nameEl as HTMLInputElement).value : '';
-        const email = emailEl ? (emailEl as HTMLInputElement).value : '';
       // Simulamos pago
-        if (result) result.innerHTML = `<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert"><p class="font-bold">¡Gracias ${name}!</p><p>Pedido simulado enviado a ${email}.</p></div>`;
+        if (result) result.innerHTML = `<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert"><p class="font-bold">¡Compra realizada con éxito!</p><p>El stock ha sido actualizado. ¡Gracias!</p></div>`;
         if (Cart) Cart.clear();
     });
   });
