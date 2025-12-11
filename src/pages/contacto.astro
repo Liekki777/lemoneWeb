@@ -5,35 +5,35 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="Contacto">
   <main class="container mx-auto px-4 py-12">
     <header class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Contacto</h1>
-      <p class="text-lg text-gray-600">¿Tienes alguna pregunta? ¡No dudes en contactarnos!</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">Contacto</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400">¿Tienes alguna pregunta? ¡No dudes en contactarnos!</p>
     </header>
 
-    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
       <form id="contactForm" novalidate>
         <div id="formFeedback" class="hidden"></div>
         
         <div class="mb-6 form-field opacity-0 translate-y-5">
-          <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
-          <input type="text" id="name" name="name" required class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="name" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Nombre</label>
+          <input type="text" id="name" name="name" required class="shadow-sm appearance-none border dark:border-gray-600 rounded w-full py-3 px-4 text-gray-700 dark:text-gray-200 dark:bg-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
           <p class="text-red-500 text-xs italic hidden error-message mt-1">El nombre es obligatorio.</p>
         </div>
 
         <div class="mb-6 form-field opacity-0 translate-y-5">
-          <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-          <input type="email" id="email" name="email" required class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="email" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Email</label>
+          <input type="email" id="email" name="email" required class="shadow-sm appearance-none border dark:border-gray-600 rounded w-full py-3 px-4 text-gray-700 dark:text-gray-200 dark:bg-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
           <p class="text-red-500 text-xs italic hidden error-message mt-1">Por favor, introduce un email válido.</p>
         </div>
 
         <div class="mb-6 form-field opacity-0 translate-y-5">
-          <label for="subject" class="block text-gray-700 text-sm font-bold mb-2">Asunto</label>
-          <input type="text" id="subject" name="subject" required class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="subject" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Asunto</label>
+          <input type="text" id="subject" name="subject" required class="shadow-sm appearance-none border dark:border-gray-600 rounded w-full py-3 px-4 text-gray-700 dark:text-gray-200 dark:bg-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
            <p class="text-red-500 text-xs italic hidden error-message mt-1">El asunto es obligatorio.</p>
         </div>
 
         <div class="mb-6 form-field opacity-0 translate-y-5">
-          <label for="message" class="block text-gray-700 text-sm font-bold mb-2">Mensaje</label>
-          <textarea id="message" name="message" rows="5" required class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+          <label for="message" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Mensaje</label>
+          <textarea id="message" name="message" rows="5" required class="shadow-sm appearance-none border dark:border-gray-600 rounded w-full py-3 px-4 text-gray-700 dark:text-gray-200 dark:bg-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
            <p class="text-red-500 text-xs italic hidden error-message mt-1">El mensaje es obligatorio.</p>
         </div>
 

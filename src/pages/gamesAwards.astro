@@ -5,8 +5,8 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="Venta de Entradas - Games Awards">
   <main class="container mx-auto px-4 py-12">
     <header class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Games Awards 2025</h1>
-      <p class="text-lg text-gray-600">¡Asegura tu sitio en el evento de gaming del año!</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">Games Awards 2025</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400">¡Asegura tu sitio en el evento de gaming del año!</p>
     </header>
 
     <div class="max-w-4xl mx-auto">
@@ -15,8 +15,8 @@ import Layout from '../layouts/Layout.astro';
         <!-- Las entradas se renderizarán aquí por JS -->
       </div>
 
-      <div class="mt-10 bg-white rounded-xl shadow-lg p-6 text-right">
-        <p class="text-2xl font-bold">Total: <span id="total-price" class="text-blue-600">€0.00</span></p>
+      <div class="mt-10 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-right">
+        <p class="text-2xl font-bold text-gray-800 dark:text-gray-200">Total: <span id="total-price" class="text-blue-600">€0.00</span></p>
         <button id="checkout-button" class="mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
           Comprar Ahora
         </button>
@@ -60,22 +60,22 @@ import Layout from '../layouts/Layout.astro';
 
         const ticketEl = document.createElement('div');
         const initialAnimationClasses = isInitialRender ? 'opacity-0 translate-y-5' : '';
-        ticketEl.className = `ticket-card bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6 ${isSoldOut ? 'opacity-60' : ''} ${initialAnimationClasses}`;
+        ticketEl.className = `ticket-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6 ${isSoldOut ? 'opacity-60' : ''} ${initialAnimationClasses}`;
         ticketEl.innerHTML = `
           <div class="flex-grow">
-            <h3 class="text-2xl font-bold text-gray-800">${ticket.name}</h3>
-            <p class="text-gray-600 mt-1">${ticket.description}</p>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200">${ticket.name}</h3>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">${ticket.description}</p>
             <p class="text-lg font-semibold text-blue-600 mt-2">€${ticket.price.toFixed(2)}</p>
           </div>
           <div class="flex-shrink-0 flex items-center gap-4">
             <div class="text-center">
-              <div class="text-sm font-bold text-gray-500">Stock</div>
-              <div class="text-lg font-bold ${isSoldOut ? 'text-red-500' : 'text-gray-800'}">${ticket.stock}</div>
+              <div class="text-sm font-bold text-gray-500 dark:text-gray-400">Stock</div>
+              <div class="text-lg font-bold ${isSoldOut ? 'text-red-500' : 'text-gray-800 dark:text-gray-200'}">${ticket.stock}</div>
             </div>
             <div class="flex items-center gap-2">
-              <button data-index="${index}" data-action="decrease" class="w-10 h-10 flex items-center justify-center text-xl font-bold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${ticket.quantity === 0 || isSoldOut ? 'disabled' : ''}>-</button>
-              <span class="w-12 text-center text-xl font-bold">${ticket.quantity}</span>
-              <button data-index="${index}" data-action="increase" class="w-10 h-10 flex items-center justify-center text-xl font-bold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${!canIncrease || isSoldOut ? 'disabled' : ''}>+</button>
+              <button data-index="${index}" data-action="decrease" class="w-10 h-10 flex items-center justify-center text-xl font-bold rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${ticket.quantity === 0 || isSoldOut ? 'disabled' : ''}>-</button>
+              <span class="w-12 text-center text-xl font-bold text-gray-800 dark:text-gray-200">${ticket.quantity}</span>
+              <button data-index="${index}" data-action="increase" class="w-10 h-10 flex items-center justify-center text-xl font-bold rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${!canIncrease || isSoldOut ? 'disabled' : ''}>+</button>
             </div>
           </div>
         `;

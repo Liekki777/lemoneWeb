@@ -1,0 +1,12 @@
+---
+// src/components/ThemeToggle.astro
+---
+<button type="button" class="theme-toggle-button relative w-16 h-8 flex items-center rounded-full p-1 bg-gray-200 dark:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900" aria-label="Cambiar tema">
+  <!-- Icons in the background -->
+  <div class="absolute flex items-center justify-between w-full h-full px-2 top-0 left-0">
+    <i class="bi bi-sun-fill text-yellow-500 text-lg"></i>
+    <i class="bi bi-moon-stars-fill text-slate-300 text-lg"></i>
+  </div>
+  <!-- Sliding circle -->
+  <span class="w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out dark:translate-x-8"></span>
+</button>

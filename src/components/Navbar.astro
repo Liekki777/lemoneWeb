@@ -1,36 +1,38 @@
 ---
 // src/components/Navbar.astro
+import ThemeToggle from './ThemeToggle.astro';
 import Search from './Search.astro';
 ---
 
 <!-- NAVBAR SIMPLE Y ELEGANTE -->
-<nav class="fixed top-0 left-0 right-0 bg-[#0d1117] shadow-lg z-50 h-16">
+<nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#0d1117]/80 backdrop-blur-sm shadow-lg dark:shadow-black/20 z-50 h-16 transition-colors duration-300">
   <div class="container mx-auto px-4 flex items-center justify-between h-full">
-    <a class="text-white font-bold text-3xl" href="/">Lemone</a>
+    <a class="text-gray-900 dark:text-white font-bold text-3xl" href="/">Lemone</a>
 
     <!-- MENÚ DESKTOP -->
     <div class="hidden lg:flex items-center space-x-8">
-      <a href="/" class="text-white text-lg hover:text-gray-300 transition-colors">Inicio</a>
-      <a href="/blog" class="text-red-500 font-bold text-lg hover:text-red-400 transition-colors">Blog</a>
+      <a href="/" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Inicio</a>
+      <a href="/blog" class="text-red-500 font-bold text-lg hover:text-red-600 dark:hover:text-red-400 transition-colors">Blog</a>
       
-      <a href="/gamesAwards" class="text-white text-lg hover:text-gray-300 transition-colors">Games Awards</a>
-      <a href="/destacado" class="text-white text-lg hover:text-gray-300 transition-colors">Destacado</a>
-      <a href="/noticias" class="text-white text-lg hover:text-gray-300 transition-colors">Noticias</a>
-      <a href="/tienda" class="text-white text-lg hover:text-gray-300 transition-colors">Tienda</a>
-      <a href="/juegos" class="text-white text-lg hover:text-gray-300 transition-colors">Juegos</a>
-      <a href="/dashboard" class="text-white text-lg hover:text-gray-300 transition-colors">Dashboard</a>
-        <button type="button" id="cartBtnDesktop" class="relative text-white p-0" aria-label="Abrir carrito">
+      <a href="/gamesAwards" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Games Awards</a>
+      <a href="/destacado" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Destacado</a>
+      <a href="/noticias" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Noticias</a>
+      <a href="/tienda" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Tienda</a>
+      <a href="/juegos" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Juegos</a>
+      <a href="/dashboard" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
+        <button type="button" id="cartBtnDesktop" class="relative text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-0 transition-colors" aria-label="Abrir carrito">
           <i class="bi bi-cart text-xl"></i>
           <span id="cart-count" class="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full" style="display:none;">0</span>
         </button>
-      <button id="searchBtnDesktop" class="flex items-center px-3 py-1.5 border border-white text-white rounded-md text-sm hover:bg-white hover:text-gray-900 transition-colors">
+      <ThemeToggle />
+      <button id="searchBtnDesktop" class="flex items-center px-3 py-1.5 border border-gray-400 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors">
         <i class="bi bi-search"></i> Buscar
       </button>
     </div>
 
     <!-- BOTÓN BUSCAR (móvil) + HAMBURGUESA (se mantiene para mejoras futuras) -->
     <div class="lg:hidden flex items-center space-x-3">
-      <button id="searchBtnMobile" class="flex items-center px-3 py-1.5 border border-white text-white rounded-md text-sm hover:bg-white hover:text-gray-900 transition-colors" aria-label="Buscar">
+      <button id="searchBtnMobile" class="flex items-center px-3 py-1.5 border border-gray-400 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Buscar">
         <i class="bi bi-search"></i>
       </button>
       <button id="mobileMenuBtn" class="flex items-center justify-center w-11 h-11 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors" aria-label="Abrir menú">
@@ -104,24 +106,25 @@ import Search from './Search.astro';
       <a href="/tienda" class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors">Tienda</a>
       <a href="/juegos" class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors">Juegos</a>
       <a href="/dashboard" class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors">Dashboard</a>
+      <div class="p-3"><ThemeToggle /></div>
     </div>
   </div>
 </div>
 <!-- NOTA: La funcionalidad de abrir/cerrar este offcanvas debe ser implementada con JavaScript personalizado. -->
 
 <!-- OFFCANVAS CARRITO -->
-<div class="fixed top-0 right-0 w-80 max-w-xs h-full bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-[1050]" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
-  <div class="flex justify-between items-center p-4 border-b border-gray-200">
-    <h5 class="text-xl font-bold text-gray-800" id="cartOffcanvasLabel">Tu carrito</h5>
-    <button type="button" id="closeCartOffcanvasBtn" class="text-gray-500 text-2xl leading-none hover:text-gray-700" aria-label="Cerrar">
+<div class="fixed top-0 right-0 w-80 max-w-xs h-full bg-white dark:bg-gray-800 shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-[1050]" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+  <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+    <h5 class="text-xl font-bold text-gray-800 dark:text-gray-200" id="cartOffcanvasLabel">Tu carrito</h5>
+    <button type="button" id="closeCartOffcanvasBtn" class="text-gray-500 dark:text-gray-400 text-2xl leading-none hover:text-gray-700 dark:hover:text-white" aria-label="Cerrar">
       &times;
     </button>
   </div>
   <div class="p-4 flex-grow">
     <div id="cartOffcanvasItems" class="space-y-2"></div>
   </div>
-  <div class="p-4 border-t border-gray-200 flex justify-between items-center">
-    <div id="cartOffcanvasTotal" class="font-bold text-lg">Total: €0.00</div>
+  <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+    <div id="cartOffcanvasTotal" class="font-bold text-lg text-gray-800 dark:text-gray-200">Total: €0.00</div>
     <div>
       <a href="/tienda/carrito" class="px-3 py-1.5 text-sm rounded-md border border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors mr-2">Ver carrito</a>
       <button id="cartCheckoutBtn" class="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors">Pagar</button>
@@ -202,18 +205,18 @@ import Search from './Search.astro';
         container.innerHTML = ''; // Limpiar contenido previo
         let total = 0;
         if (!items.length) {
-          container.innerHTML = '<div class="text-gray-500">Tu carrito está vacío</div>';
+          container.innerHTML = '<div class="text-gray-500 dark:text-gray-400">Tu carrito está vacío</div>';
         } else {
           for (const it of items) {
             total += it.price * (it.quantity || 1); // Asegurarse de que quantity sea al menos 1
             const a = document.createElement('div');
-            a.className = 'flex items-center justify-between p-3 border border-gray-200 rounded-md';
+            a.className = 'flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-md';
             a.innerHTML = `
               <div class="flex items-center gap-3">
                 <img src="${it.image}" alt="${it.title}" class="w-12 h-12 object-cover rounded-md" />
                 <div>
-                  <div class="font-semibold text-sm mb-1">${it.title}</div>
-                  <div class="text-sm text-gray-500">€${Number(it.price).toFixed(2)} × ${it.quantity}</div>
+                  <div class="font-semibold text-sm mb-1 text-gray-800 dark:text-gray-200">${it.title}</div>
+                  <div class="text-sm text-gray-500 dark:text-gray-400">€${Number(it.price).toFixed(2)} × ${it.quantity}</div>
                 </div>
               </div>
               <div class="flex space-x-1">
@@ -224,7 +227,7 @@ import Search from './Search.astro';
             container.appendChild(a);
           }
         }
-        totalEl.textContent = `Total: €${Number(total).toFixed(2)}`;
+        totalEl.textContent = `Total: €${Number(total).toFixed(2)}`; // The color is handled by CSS classes on the element
         // attach handlers
         for (const b of Array.from(container.querySelectorAll('.cart-off-decr'))) {
           b.addEventListener('click', () => {

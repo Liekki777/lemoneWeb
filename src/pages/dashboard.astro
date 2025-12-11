@@ -27,31 +27,31 @@ const oldestPost = sortedByDate[sortedByDate.length - 1];
 <Layout title="Dashboard del Contenido">
   <main class="container mx-auto px-4 py-12">
     <header class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Dashboard del Contenido</h1>
-      <p class="text-lg text-gray-600">Una vista general de las estadísticas del blog.</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">Dashboard del Contenido</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400">Una vista general de las estadísticas del blog.</p>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <!-- Widget: Total Posts -->
-      <div class="dashboard-widget bg-white rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center opacity-0 translate-y-5">
-        <dt class="text-sm font-medium text-gray-500 truncate">Total de Artículos</dt>
+      <div class="dashboard-widget bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center opacity-0 translate-y-5">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total de Artículos</dt>
         <dd class="mt-1 text-5xl font-extrabold text-blue-600">{totalPosts}</dd>
       </div>
 
       <!-- Widget: Total Tags -->
-      <div class="dashboard-widget bg-white rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center opacity-0 translate-y-5">
-        <dt class="text-sm font-medium text-gray-500 truncate">Etiquetas Únicas</dt>
+      <div class="dashboard-widget bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center opacity-0 translate-y-5">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Etiquetas Únicas</dt>
         <dd class="mt-1 text-5xl font-extrabold text-green-600">{sortedTags.length}</dd>
       </div>
 
       <!-- Widget: Distribución de Etiquetas -->
-      <div class="dashboard-widget bg-white rounded-xl shadow-lg p-6 md:col-span-2 lg:col-span-1 opacity-0 translate-y-5">
-        <h3 class="font-semibold text-gray-800 mb-4">Top Etiquetas</h3>
+      <div class="dashboard-widget bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:col-span-2 lg:col-span-1 opacity-0 translate-y-5">
+        <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">Top Etiquetas</h3>
         <ul class="space-y-3">
           {sortedTags.slice(0, 5).map(([tag, count]) => (
             <li class="flex items-center justify-between">
-              <span class="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full">{tag}</span>
-              <span class="font-bold text-gray-700">{count} {count > 1 ? 'posts' : 'post'}</span>
+              <span class="inline-block bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 text-sm font-semibold px-3 py-1 rounded-full">{tag}</span>
+              <span class="font-bold text-gray-700 dark:text-gray-300">{count} {count > 1 ? 'posts' : 'post'}</span>
             </li>
           ))}
         </ul>
