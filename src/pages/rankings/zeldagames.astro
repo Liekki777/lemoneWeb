@@ -1,0 +1,183 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const RAWG_API_KEY = import.meta.env.RAWG_API_KEY;
+const ZELDA_SERIES_ID = 436; // ID para "The Legend of Zelda" series en RAWG
+const PAGE_SIZE = 10; // Cargar 10 juegos por página
+
+let initialGames: any[] = [];
+let nextPageUrl: string | null = null;
+let error = null;
+
+if (!RAWG_API_KEY) {
+  error = "La API Key de RAWG no está configurada. Por favor, añádela a tu archivo .env";
+} else {
+  try {
+    const response = await fetch(`https://api.rawg.io/api/games?series=${ZELDA_SERIES_ID}&page_size=${PAGE_SIZE}&key=${RAWG_API_KEY}`);
+    if (!response.ok) {
+        throw new Error(`La API respondió con el estado ${response.status}`);
+    }
+    const data = await response.json();
+    initialGames = data.results || [];
+    nextPageUrl = data.next;
+  } catch (e: any) {
+    error = "Error al contactar con la API de RAWG. " + e.message;
+  }
+}
+---
+
+<Layout title="Ranking - Saga Zelda">
+  <main class="container mx-auto px-4 py-20">
+    <header class="text-center mb-16">
+      <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-4">Ranking: The Legend of Zelda</h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400">Un viaje a través de las eras de Hyrule.</p>
+    </header>
+
+    {error && (
+      <div class="text-center py-20 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
+        <p class="font-bold text-2xl">¡Oops! Hubo un problema</p>
+        <p class="mt-2">{error}</p>
+      </div>
+    )}
+
+    {!error && (
+      <div class="flex flex-col md:flex-row gap-12">
+        <!-- Controles de Ranking -->
+        <aside class="md:w-1/4 lg:w-1/5">
+          <div class="sticky top-24 ranking-controls flex md:flex-col gap-4">
+            <h3 class="text-lg font-semibold text-gray-500 dark:text-gray-400 px-4 hidden md:block">Ordenar por:</h3>
+            <button data-sort="released" class="ranking-button active">Lanzamiento</button>
+            <button data-sort="metacritic" class="ranking-button">Crítica</button>
+            <button data-sort="rating" class="ranking-button">Público</button>
+          </div>
+        </aside>
+
+        <!-- Grid de Juegos -->
+        <div id="games-grid" class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10">
+          {initialGames.map(game => (
+            <div class="game-card group" data-slug={game.slug} data-released={game.released} data-metacritic={game.metacritic || 0} data-rating={game.rating}>
+              <div class="relative">
+                <img src={game.background_image} alt={game.name} class="rounded-lg w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" />
+                <div class="absolute top-2 right-2 bg-black/60 text-white font-bold text-xl rounded-md px-3 py-1 backdrop-blur-sm score-display">
+                  {new Date(game.released).getFullYear()}
+                </div>
+              </div>
+              <h3 class="text-xl font-bold mt-3 text-gray-800 dark:text-gray-200">{game.name}</h3>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+    <div id="loader" class="text-center py-10 h-24">
+        <!-- El spinner de carga aparecerá aquí -->
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .ranking-button {
+    @apply w-full text-left text-lg font-bold p-4 rounded-lg border-2 border-transparent transition-all duration-200;
+    @apply text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-gray-800;
+  }
+  .ranking-button.active {
+    @apply bg-green-600 text-white border-green-700 scale-105 shadow-lg;
+  }
+  .ranking-button:not(.active):hover {
+    @apply bg-gray-300 dark:bg-gray-700;
+  }
+</style>
+
+<script lang="ts" define:vars={{ nextPageUrl }}>
+  import { gsap } from 'gsap';
+  import { Flip } from 'gsap/flip';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(Flip, ScrollTrigger);
+
+  const grid = document.querySelector("#games-grid") as HTMLElement;
+  const buttons = document.querySelectorAll(".ranking-button");
+  const loader = document.querySelector("#loader") as HTMLElement;
+  
+  let currentSort = 'released';
+  let isLoading = false;
+  let nextUrl = nextPageUrl;
+
+  // --- Lógica de Ordenamiento ---
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      const sortType = (button as HTMLElement).dataset.sort;
+      if (!sortType || button.classList.contains("active")) return;
+
+      buttons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+      currentSort = sortType;
+
+      const state = Flip.getState(".game-card");
+      
+      const cards = Array.from(grid.querySelectorAll('.game-card')) as HTMLElement[];
+      
+      cards.sort((a, b) => {
+        const valA = a.dataset[sortType] || '0';
+        const valB = b.dataset[sortType] || '0';
+        if (sortType === 'released') {
+            return valB.localeCompare(valA); // El más nuevo primero
+        }
+        return parseFloat(valB) - parseFloat(valA);
+      });
+
+      cards.forEach(card => grid.appendChild(card));
+
+      Flip.from(state, { duration: 0.7, scale: true, ease: "power1.inOut", stagger: 0.05 });
+    });
+  });
+
+  // --- Lógica de Scroll Infinito ---
+  function loadMoreGames() {
+    if (isLoading || !nextUrl) return;
+    isLoading = true;
+    loader.innerHTML = `<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-white mx-auto"></div>`;
+
+    fetch(nextUrl)
+      .then(response => response.json())
+      .then(data => {
+        const newGames = data.results || [];
+        nextUrl = data.next;
+
+        const fragment = document.createDocumentFragment();
+        newGames.forEach((game: any) => {
+            const card = document.createElement('div');
+            card.className = 'game-card group opacity-0';
+            card.dataset.slug = game.slug;
+            card.dataset.released = game.released;
+            card.dataset.metacritic = String(game.metacritic || 0);
+            card.dataset.rating = String(game.rating);
+            card.innerHTML = `
+              <div class="relative">
+                <img src="${game.background_image}" alt="${game.name}" class="rounded-lg w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" />
+                <div class="absolute top-2 right-2 bg-black/60 text-white font-bold text-xl rounded-md px-3 py-1 backdrop-blur-sm score-display">${new Date(game.released).getFullYear()}</div>
+              </div>
+              <h3 class="text-xl font-bold mt-3 text-gray-800 dark:text-gray-200">${game.name}</h3>`;
+            fragment.appendChild(card);
+        });
+
+        grid.appendChild(fragment);
+        const newCards = Array.from(grid.querySelectorAll('.game-card.opacity-0'));
+        gsap.to(newCards, { opacity: 1, duration: 0.5, stagger: 0.1, onComplete: () => newCards.forEach(c => c.classList.remove('opacity-0')) });
+
+        isLoading = false;
+        if (!nextUrl) {
+            loader.innerHTML = '<p class="text-gray-500">Has llegado al final de Hyrule.</p>';
+            st.kill();
+        } else {
+            loader.innerHTML = '';
+        }
+      })
+      .catch(err => {
+        console.error("Fallo al cargar más juegos:", err);
+        loader.innerHTML = '<p class="text-red-500">Error al cargar más juegos.</p>';
+        isLoading = false;
+      });
+  }
+
+  const st = ScrollTrigger.create({ trigger: loader, start: "top 80%", onEnter: loadMoreGames });
+</script>

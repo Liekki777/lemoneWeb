@@ -1,0 +1,191 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// --- CONFIGURACIÓN ---
+// 1. Añade tu API Key de RAWG en un archivo .env en la raíz del proyecto:
+//    RAWG_API_KEY=tu_api_key
+// 2. Modifica el array `lemoneOrder` para crear tu ranking personalizado.
+
+const RAWG_API_KEY = import.meta.env.RAWG_API_KEY;
+
+// Ranking personalizado "Lemoné". ¡Modifica este orden como quieras!
+const lemoneOrder = [
+  'the-legend-of-zelda-tears-of-the-kingdom',
+  'hollow-knight-silksong',
+  'metroid-prime-4',
+  'super-mario-odyssey',
+  'metroid-dread',
+  'hades-switch',
+  'animal-crossing-new-horizons',
+  'fire-emblem-engage',
+  'bayonetta-3',
+  'pokemon-legends-arceus',
+];
+
+let games: any[] = [];
+let error = null;
+
+if (!RAWG_API_KEY) {
+  error = "La API Key de RAWG no está configurada. Por favor, añádela a tu archivo .env";
+} else {
+  try {
+    const gamePromises = lemoneOrder.map(slug =>
+      fetch(`https://api.rawg.io/api/games/${slug}?key=${RAWG_API_KEY}`).then(res => res.json())
+    );
+    const results = await Promise.all(gamePromises);
+    games = results.filter(game => !game.detail); // Filtra errores de la API
+  } catch (e: any) {
+    error = "Error al contactar con la API de RAWG. " + e.message;
+  }
+}
+
+// Crear los diferentes rankings en el servidor
+const getSortedSlugs = (sortingFn: (a: any, b: any) => number) => {
+  return [...games].sort(sortingFn).map(g => g.slug);
+};
+
+const criticOrder = getSortedSlugs((a, b) => (b.metacritic || 0) - (a.metacritic || 0));
+const publicOrder = getSortedSlugs((a, b) => b.rating - a.rating);
+
+// Objeto más pequeño para pasar al cliente, solo con los datos necesarios.
+const gameScores = Object.fromEntries(
+  games.map(g => [g.slug, { metacritic: g.metacritic || 'N/A', rating: g.rating }])
+);
+
+// Orden inicial para el renderizado
+const initialGames = [...games].sort((a, b) => lemoneOrder.indexOf(a.slug) - lemoneOrder.indexOf(b.slug));
+---
+
+<Layout title="Ranking - Switch 2">
+  <main class="container mx-auto px-4 py-20">
+    <header class="text-center mb-16">
+      <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-4">Ranking: Switch 2</h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400">Los 10 juegos que definirán la nueva era.</p>
+    </header>
+
+    {error && (
+      <div class="text-center py-20 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
+        <p class="font-bold text-2xl">¡Oops! Hubo un problema</p>
+        <p class="mt-2">{error}</p>
+      </div>
+    )}
+
+    {!error && games.length > 0 && (
+      <div class="flex flex-col md:flex-row gap-12">
+        <!-- Controles de Ranking -->
+        <aside class="md:w-1/4 lg:w-1/5">
+          <div class="sticky top-24 ranking-controls flex md:flex-col gap-4">
+            <button data-ranking="lemone" class="ranking-button active">Lemoné</button>
+            <button data-ranking="critic" class="ranking-button">Crítica</button>
+            <button data-ranking="public" class="ranking-button">Público</button>
+          </div>
+        </aside>
+
+        <!-- Grid de Juegos -->
+        <div id="games-grid" class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {initialGames.map((game, index) => (
+            <div class="game-card group" data-slug={game.slug}>
+              <div class="relative">
+                <img src={game.background_image} alt={game.name} class="rounded-lg w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" />
+                <div class="absolute top-2 right-2 bg-black/60 text-white font-bold text-2xl rounded-md px-3 py-1 backdrop-blur-sm score-display">
+                  #{index + 1}
+                </div>
+              </div>
+              <h3 class="text-xl font-bold mt-3 text-gray-800 dark:text-gray-200">{game.name}</h3>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </main>
+</Layout>
+
+<style>
+  .ranking-button {
+    @apply w-full text-left text-lg font-bold p-4 rounded-lg border-2 border-transparent transition-all duration-200;
+    @apply text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-gray-800;
+  }
+  .ranking-button.active {
+    @apply bg-blue-600 text-white border-blue-700 scale-105 shadow-lg;
+  }
+  .ranking-button:not(.active):hover {
+    @apply bg-gray-300 dark:bg-gray-700;
+  }
+</style>
+
+<!-- Pasamos los datos al cliente de forma segura usando un script JSON -->
+<script type="application/json" id="page-data">
+  {JSON.stringify({
+    gameScores,
+    rankings: { lemone: lemoneOrder, critic: criticOrder, public: publicOrder }
+  })}
+</script>
+
+<script lang="ts">
+  import { gsap } from 'gsap';
+  import { Flip } from 'gsap/flip'; // Asegurarse de que la importación sea en minúsculas
+
+  gsap.registerPlugin(Flip);
+
+  // Definir tipos para nuestros datos para mayor seguridad
+  type Rankings = {
+    lemone: string[];
+    critic: string[];
+    public: string[];
+  };
+  type RankingKey = keyof Rankings;
+
+  const grid = document.querySelector("#games-grid");
+  const buttons = document.querySelectorAll(".ranking-button");
+  const dataEl = document.getElementById('page-data');
+  
+  // Comprobamos que dataEl y su contenido existan antes de parsear
+  const { gameScores, rankings } = dataEl?.textContent 
+    ? JSON.parse(dataEl.textContent) as { gameScores: Record<string, { metacritic: number | string, rating: number }>, rankings: Rankings }
+    : { gameScores: {}, rankings: { lemone: [], critic: [], public: [] } };
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      // Usamos 'as HTMLElement' para que TypeScript sepa que es un elemento del DOM y tiene 'dataset'
+      const rankingType = (button as HTMLElement).dataset.ranking;
+
+      // Comprobamos que rankingType es una clave válida de nuestros rankings
+      if (!rankingType || !(rankingType in rankings) || button.classList.contains("active")) {
+        return;
+      }
+      const validRankingKey = rankingType as RankingKey;
+
+      buttons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      // Corregido: Flip.getState no necesita 'props' para esta animación
+      const state = Flip.getState(".game-card");
+      
+      const newOrder = rankings[validRankingKey];
+
+      if (!newOrder) return; // Salir si el ranking no se encuentra
+
+      newOrder.forEach((slug: string, index: number) => {
+        const card = document.querySelector(`.game-card[data-slug='${slug}']`);
+        if (card && grid) {
+          grid.appendChild(card);
+          const scoreEl = card.querySelector('.score-display');
+          const scores = gameScores[slug];
+          if (scoreEl && scores) {
+            let scoreText = `#${index + 1}`;
+            if (validRankingKey === 'critic') scoreText = String(scores.metacritic);
+            if (validRankingKey === 'public') scoreText = scores.rating.toFixed(1);
+            scoreEl.textContent = scoreText;
+          }
+        }
+      });
+
+      Flip.from(state, {
+        duration: 0.7,
+        scale: true,
+        ease: "power1.inOut",
+        stagger: 0.05,
+      });
+    });
+  });
+</script>
