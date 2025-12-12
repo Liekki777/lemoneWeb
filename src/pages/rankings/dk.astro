@@ -1,5 +1,5 @@
 ---
-// src/pages/rankings/switch2.astro
+// src/pages/rankings/dk.astro
 import Layout from '../../layouts/Layout.astro';
 
 interface Game {
@@ -11,63 +11,68 @@ interface Game {
 }
 
 const API_KEY = import.meta.env.RAWG_API_KEY;
-const SWITCH_PLATFORM_ID = 7; // ID de Nintendo Switch en RAWG
 
 let games: Game[] = [];
 let error = "";
 
-try {
-  // 1. Fetch a la API: Buscamos juegos de Switch, ordenados por metacritic descendente
-  const response = await fetch(
-    `https://api.rawg.io/api/games?key=${API_KEY}&platforms=${SWITCH_PLATFORM_ID}&ordering=-metacritic&page_size=40`
-  );
+if (!API_KEY) {
+  error = "Falta la API Key de RAWG en el archivo .env";
+} else {
+  try {
+    // 1. Fetch a la API: Buscamos "Donkey Kong", ordenamos por metacritic descendente
+    // Solicitamos 60 para asegurar que tras el filtrado tengamos al menos 23
+    const response = await fetch(
+      `https://api.rawg.io/api/games?key=${API_KEY}&search=Donkey+Kong&ordering=-metacritic&page_size=60`
+    );
 
-  if (!response.ok) {
-    throw new Error(`Error al conectar con RAWG: ${response.statusText}`);
+    if (!response.ok) {
+      throw new Error(`Error al conectar con RAWG: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    // 2. Filtrado adicional: Aseguramos que tengan imagen, puntuación y sean realmente de DK
+    games = data.results.filter((g: any) => 
+      g.metacritic &&
+      g.background_image &&
+      g.name.toLowerCase().includes("donkey")
+    ).slice(0, 23);
+
+  } catch (e) {
+    console.error(e);
+    error = "No se pudieron cargar los juegos. Por favor verifica tu API Key de RAWG.";
   }
-
-  const data = await response.json();
-
-  // 2. Filtrado adicional: Aseguramos que tengan imagen y puntuación
-  games = data.results.filter((g: any) => 
-    g.metacritic && 
-    g.background_image
-  ).slice(0, 10);
-
-} catch (e) {
-  console.error(e);
-  error = "No se pudieron cargar los juegos. Por favor verifica tu API Key de RAWG.";
 }
 ---
 <style is:global>
   html {
     scroll-snap-type: y mandatory;
   }
-  .switch-section {
+  .dk-section {
     scroll-snap-align: start;
   }
 </style>
-<Layout title="Ranking - Nintendo Switch">
+<Layout title="Ranking - Donkey Kong">
 <div class="bg-black min-h-screen w-full">
   {error && <div class="text-red-500 text-center pt-32 text-2xl font-bold">{error}</div>}
 
   {games.map((game) => (
-    <section class="switch-section relative w-full h-screen overflow-hidden flex items-center justify-center">
+    <section class="dk-section relative w-full h-screen overflow-hidden flex items-center justify-center">
       <!-- Fondo con imagen para el efecto Parallax -->
       <div 
-        class="switch-bg absolute top-0 left-0 w-full h-[120%] bg-cover bg-center will-change-transform"
+        class="dk-bg absolute top-0 left-0 w-full h-[120%] bg-cover bg-center will-change-transform"
         style={`background-image: url('${game.background_image}')`}
       >
         <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
       </div>
 
       <!-- Contenido del juego -->
-      <div class="switch-content relative z-10 text-center text-white p-6 max-w-4xl translate-y-12 opacity-0">
+      <div class="dk-content relative z-10 text-center text-white p-6 max-w-4xl translate-y-12 opacity-0">
         <h2 class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-2xl tracking-tight">{game.name}</h2>
         <div class="flex justify-center items-center gap-6">
           <div class="flex flex-col items-center">
             <span class="text-sm text-gray-300 uppercase tracking-widest mb-1">Metacritic</span>
-            <span class="bg-blue-600 text-white text-2xl font-bold px-4 py-1 rounded shadow-lg border border-blue-400">
+            <span class="bg-yellow-600 text-white text-2xl font-bold px-4 py-1 rounded shadow-lg border border-yellow-400">
               {game.metacritic}
             </span>
           </div>
@@ -90,11 +95,11 @@ try {
 
   gsap.registerPlugin(ScrollTrigger);
 
-  const sections = document.querySelectorAll<HTMLElement>('.switch-section');
+  const sections = document.querySelectorAll<HTMLElement>('.dk-section');
 
   sections.forEach((section) => {
-    const bg = section.querySelector('.switch-bg');
-    const content = section.querySelector('.switch-content');
+    const bg = section.querySelector('.dk-bg');
+    const content = section.querySelector('.dk-content');
     const title = content?.querySelector('h2');
     const stats = content?.querySelector('.flex');
 
