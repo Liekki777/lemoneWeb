@@ -1,0 +1,339 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Comebananas - El Juego">
+  <main class="flex flex-col items-center justify-center min-h-screen bg-green-900 text-white p-4 font-sans select-none">
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-6 text-yellow-400 drop-shadow-lg text-center">🦍 Comebananas 🍌</h1>
+    
+    <div class="bg-gray-800 p-4 md:p-6 rounded-xl shadow-2xl border-4 border-yellow-600 max-w-full">
+      <div class="flex justify-between items-center mb-4 text-xl font-bold font-mono">
+        <div class="text-yellow-300">Puntuación: <span id="score">0</span></div>
+        <div id="game-over" class="hidden text-red-500 animate-pulse">¡TE HAN ATRAPADO!</div>
+      </div>
+      
+      <div class="relative">
+        <canvas id="gameCanvas" width="400" height="400" class="bg-black rounded-lg shadow-inner cursor-none max-w-full h-auto"></canvas>
+        
+        <!-- Pantalla de Inicio / Reinicio -->
+        <div id="start-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-lg z-10 backdrop-blur-sm p-4 text-center">
+          <div class="text-6xl mb-4 animate-bounce">🦍</div>
+          <h2 class="text-2xl font-bold text-yellow-400 mb-2">¡Hora de comer!</h2>
+          <p class="text-gray-300 mb-6 text-sm md:text-base">
+            Usa las flechas ⬅️⬆️⬇️➡️ para moverte.<br>
+            ¡Come todas las bananas y huye de los cocodrilos!
+          </p>
+          <button id="start-btn" class="px-8 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-xl rounded-full transition transform hover:scale-105 shadow-lg border-b-4 border-yellow-700 active:border-0 active:translate-y-1">
+            Jugar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controles Táctiles (Móvil) -->
+    <div class="mt-6 grid grid-cols-3 gap-2 md:hidden touch-none select-none">
+      <button id="btn-up" class="col-start-2 w-16 h-16 bg-gray-700/80 rounded-full text-3xl shadow-lg active:bg-yellow-600 active:scale-95 transition-all flex items-center justify-center border-2 border-gray-600" aria-label="Arriba">⬆️</button>
+      <button id="btn-left" class="col-start-1 row-start-2 w-16 h-16 bg-gray-700/80 rounded-full text-3xl shadow-lg active:bg-yellow-600 active:scale-95 transition-all flex items-center justify-center border-2 border-gray-600" aria-label="Izquierda">⬅️</button>
+      <button id="btn-right" class="col-start-3 row-start-2 w-16 h-16 bg-gray-700/80 rounded-full text-3xl shadow-lg active:bg-yellow-600 active:scale-95 transition-all flex items-center justify-center border-2 border-gray-600" aria-label="Derecha">➡️</button>
+      <button id="btn-down" class="col-start-2 row-start-3 w-16 h-16 bg-gray-700/80 rounded-full text-3xl shadow-lg active:bg-yellow-600 active:scale-95 transition-all flex items-center justify-center border-2 border-gray-600" aria-label="Abajo">⬇️</button>
+    </div>
+
+    <!-- Leyenda -->
+    <div class="mt-8 flex flex-wrap justify-center gap-4 md:gap-8 text-sm text-gray-400 bg-black/30 px-6 py-3 rounded-full">
+      <div class="flex items-center gap-2"><span class="text-2xl">🦍</span> Tú</div>
+      <div class="flex items-center gap-2"><span class="text-2xl">🍌</span> 10 Pts</div>
+      <div class="flex items-center gap-2"><span class="text-2xl">🌟</span> Super</div>
+      <div class="flex items-center gap-2"><span class="text-2xl">🐊</span> Peligro</div>
+    </div>
+    
+    <div class="mt-4 text-xs text-gray-500">
+      Consejo: Los cocodrilos no son muy listos, ¡úsalo a tu favor!
+    </div>
+  </main>
+</Layout>
+
+<script>
+  const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d');
+  const scoreEl = document.getElementById('score');
+  const gameOverEl = document.getElementById('game-over');
+  const startScreen = document.getElementById('start-screen');
+  const startBtn = document.getElementById('start-btn');
+
+  if (!canvas || !ctx) throw new Error("Canvas not found");
+
+  const TILE_SIZE = 20;
+  const ROWS = 20;
+  const COLS = 20;
+  const SPEED = 2; // Píxeles por frame (debe ser divisor de TILE_SIZE)
+
+  // Mapa del nivel: 1=Muro, 0=Banana, 2=Vacío, 3=Super Banana
+  const INITIAL_MAP = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,3,1],
+    [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1],
+    [1,3,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,0,1,0,1,1,1,1,1,1,0,1,0,1,1,0,1],
+    [1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+    [1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,1,1],
+    [1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1], // Zona central abierta
+    [1,0,1,1,0,1,0,1,1,0,0,1,1,0,1,0,1,1,0,1],
+    [1,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1],
+    [1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,0,1,1,1,1],
+    [1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+    [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1],
+    [1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1],
+    [1,1,0,1,0,1,0,1,1,1,1,1,1,0,1,0,1,0,1,1],
+    [1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+    [1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1],
+    [1,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  ];
+
+  let map: number[][] = [];
+  let score = 0;
+  let gameLoopId: number;
+  let isGameOver = false;
+  let powerModeTimeout: any;
+
+  // Direcciones: 0: Arriba, 1: Derecha, 2: Abajo, 3: Izquierda
+  const DIRS = [
+    { x: 0, y: -1 }, // Arriba
+    { x: 1, y: 0 },  // Derecha
+    { x: 0, y: 1 },  // Abajo
+    { x: -1, y: 0 }  // Izquierda
+  ];
+
+  class Entity {
+    x: number;
+    y: number;
+    dir: number;
+    nextDir: number;
+    type: 'player' | 'ghost';
+    isScared: boolean;
+
+    constructor(x: number, y: number, type: 'player' | 'ghost') {
+      this.x = x * TILE_SIZE;
+      this.y = y * TILE_SIZE;
+      this.dir = 1; // Empieza moviéndose a la derecha
+      this.nextDir = 1;
+      this.type = type;
+      this.isScared = false;
+    }
+
+    draw() {
+      let emoji = this.type === 'player' ? '🦍' : '🐊';
+      if (this.type === 'ghost' && this.isScared) emoji = '😱';
+      ctx!.font = '18px Arial';
+      ctx!.textAlign = 'center';
+      ctx!.textBaseline = 'middle';
+      // Centrar emoji en la celda
+      ctx!.fillText(emoji, this.x + TILE_SIZE / 2, this.y + TILE_SIZE / 2 + 2);
+    }
+
+    move() {
+      // Solo cambiamos de dirección o comprobamos colisiones cuando estamos alineados con la cuadrícula
+      if (this.x % TILE_SIZE === 0 && this.y % TILE_SIZE === 0) {
+        const gridX = Math.round(this.x / TILE_SIZE);
+        const gridY = Math.round(this.y / TILE_SIZE);
+
+        if (this.type === 'player') {
+          // Intentar cambiar a la dirección deseada (nextDir)
+          const nextDx = DIRS[this.nextDir].x;
+          const nextDy = DIRS[this.nextDir].y;
+          
+          // Si la siguiente celda en nextDir no es pared, giramos
+          if (map[gridY + nextDy] && map[gridY + nextDy][gridX + nextDx] !== 1) {
+            this.dir = this.nextDir;
+          }
+          
+          // Comprobar si la dirección actual está bloqueada
+          const dx = DIRS[this.dir].x;
+          const dy = DIRS[this.dir].y;
+          if (map[gridY + dy] && map[gridY + dy][gridX + dx] === 1) {
+            return; // Detenerse ante un muro
+          }
+
+          // Comer banana
+          if (map[gridY][gridX] === 0) {
+            map[gridY][gridX] = 2; // Marcar como comido
+            score += 10;
+            if (scoreEl) scoreEl.textContent = score.toString();
+          } else if (map[gridY][gridX] === 3) {
+            map[gridY][gridX] = 2; // Comer Super Banana
+            score += 50;
+            if (scoreEl) scoreEl.textContent = score.toString();
+            activatePowerMode();
+          }
+        } else {
+          // IA Fantasma: Giro aleatorio válido
+          const validDirs = [];
+          for (let i = 0; i < 4; i++) {
+            // Evitar girar 180 grados inmediatamente a menos que sea un callejón sin salida
+            if (i === (this.dir + 2) % 4) continue; 
+            
+            const checkY = gridY + DIRS[i].y;
+            const checkX = gridX + DIRS[i].x;
+
+            if (map[checkY] && map[checkY][checkX] !== 1) {
+              validDirs.push(i);
+            }
+          }
+          
+          if (validDirs.length === 0) {
+             // Callejón sin salida, dar media vuelta
+             validDirs.push((this.dir + 2) % 4);
+          }
+
+          // Elegir una dirección aleatoria de las posibles
+          this.dir = validDirs[Math.floor(Math.random() * validDirs.length)];
+        }
+      }
+
+      this.x += DIRS[this.dir].x * SPEED;
+      this.y += DIRS[this.dir].y * SPEED;
+      
+      // Atravesar pantalla (efecto túnel)
+      if (this.x < -TILE_SIZE) this.x = canvas.width;
+      if (this.x > canvas.width) this.x = -TILE_SIZE;
+    }
+  }
+
+  let player: Entity;
+  let ghosts: Entity[] = [];
+
+  function activatePowerMode() {
+    ghosts.forEach(g => g.isScared = true);
+    if (powerModeTimeout) clearTimeout(powerModeTimeout);
+    powerModeTimeout = setTimeout(() => {
+      ghosts.forEach(g => g.isScared = false);
+    }, 8000); // 8 segundos de poder
+  }
+
+  function initGame() {
+    // Copia profunda del mapa para reiniciar las bananas
+    map = JSON.parse(JSON.stringify(INITIAL_MAP));
+    score = 0;
+    if (scoreEl) scoreEl.textContent = '0';
+    if (gameOverEl) gameOverEl.classList.add('hidden');
+    if (powerModeTimeout) clearTimeout(powerModeTimeout);
+    
+    // Posiciones iniciales
+    player = new Entity(1, 1, 'player');
+    ghosts = [
+      new Entity(9, 9, 'ghost'),
+      new Entity(10, 9, 'ghost'),
+      new Entity(9, 10, 'ghost'),
+      new Entity(10, 10, 'ghost')
+    ];
+    
+    isGameOver = false;
+    gameLoop();
+  }
+
+  function drawMap() {
+    ctx!.fillStyle = 'black';
+    ctx!.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        if (map[y][x] === 1) {
+          // Muro (Palmera)
+          ctx!.font = '20px Arial';
+          ctx!.textAlign = 'center';
+          ctx!.textBaseline = 'middle';
+          ctx!.fillText('🌴', x * TILE_SIZE + TILE_SIZE/2, y * TILE_SIZE + TILE_SIZE/2 + 2);
+        } else if (map[y][x] === 0) {
+          // Banana
+          ctx!.font = '14px Arial';
+          ctx!.textAlign = 'center';
+          ctx!.textBaseline = 'middle';
+          ctx!.fillText('🍌', x * TILE_SIZE + TILE_SIZE/2, y * TILE_SIZE + TILE_SIZE/2);
+        } else if (map[y][x] === 3) {
+          // Super Banana
+          ctx!.font = '16px Arial';
+          ctx!.textAlign = 'center';
+          ctx!.textBaseline = 'middle';
+          ctx!.fillText('🌟', x * TILE_SIZE + TILE_SIZE/2, y * TILE_SIZE + TILE_SIZE/2 + 1);
+        }
+      }
+    }
+  }
+
+  function gameLoop() {
+    if (isGameOver) return;
+
+    ctx!.clearRect(0, 0, canvas.width, canvas.height);
+    drawMap();
+
+    player.move();
+    player.draw();
+
+    ghosts.forEach(ghost => {
+      ghost.move();
+      ghost.draw();
+
+      // Colisión simple (distancia entre centros)
+      const dx = player.x - ghost.x;
+      const dy = player.y - ghost.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < TILE_SIZE * 0.8) {
+        if (ghost.isScared) {
+          // Comer fantasma
+          ghost.x = 9 * TILE_SIZE; // Respawn en el centro
+          ghost.y = 9 * TILE_SIZE;
+          ghost.isScared = false;
+          score += 200;
+          if (scoreEl) scoreEl.textContent = score.toString();
+        } else {
+          gameOver();
+        }
+      }
+    });
+
+    gameLoopId = requestAnimationFrame(gameLoop);
+  }
+
+  function gameOver() {
+    isGameOver = true;
+    cancelAnimationFrame(gameLoopId);
+    if (gameOverEl) gameOverEl.classList.remove('hidden');
+    if (startScreen) startScreen.classList.remove('hidden');
+    if (startBtn) startBtn.textContent = 'Intentar de nuevo';
+  }
+
+  // Control de teclado
+  window.addEventListener('keydown', (e) => {
+    // Prevenir scroll con las flechas
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault();
+    }
+
+    switch(e.key) {
+      case 'ArrowUp': player.nextDir = 0; break;
+      case 'ArrowRight': player.nextDir = 1; break;
+      case 'ArrowDown': player.nextDir = 2; break;
+      case 'ArrowLeft': player.nextDir = 3; break;
+    }
+  });
+
+  startBtn?.addEventListener('click', () => {
+    if (startScreen) startScreen.classList.add('hidden');
+    initGame();
+  });
+
+  // Controles táctiles
+  const setupBtn = (id: string, dir: number) => {
+    const btn = document.getElementById(id);
+    btn?.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      if (player) player.nextDir = dir;
+    });
+  };
+  setupBtn('btn-up', 0);
+  setupBtn('btn-right', 1);
+  setupBtn('btn-down', 2);
+  setupBtn('btn-left', 3);
+</script>
