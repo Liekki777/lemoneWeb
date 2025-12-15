@@ -9,9 +9,9 @@ import Search from "./Search.astro";
   class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#0d1117]/80 backdrop-blur-sm shadow-lg dark:shadow-black/20 z-50 h-16 transition-colors duration-300"
 >
   <div class="container mx-auto px-4 flex items-center justify-between h-full">
-    <a class="text-gray-900 dark:text-white font-bold text-3xl" href="/"
-      >Lemone</a
-    >
+    <a id="logo-lemone" class="text-gray-900 dark:text-white font-bold text-3xl flex cursor-pointer" href="/">
+      {"Lemone".split('').map(char => <span class="inline-block logo-letter">{char}</span>)}
+    </a>
 
     <!-- MENÚ DESKTOP -->
     <div class="hidden lg:flex items-center space-x-8">
@@ -216,30 +216,31 @@ import Search from "./Search.astro";
         >Games Awards</a
       >
       <a
-        href="/destacado"
+        href="/rankings"
         class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
-        >Destacado</a
+        >Rankings</a
       >
-      <a
+      <!-- <a
         href="/noticias"
         class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
         >Noticias</a
-      >
-      <a
-        href="/tienda"
-        class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
-        >Tienda</a
-      >
+      > -->
+      
       <a
         href="/juegos"
         class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
         >Juegos</a
       >
       <a
+        href="/tienda"
+        class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
+        >Tienda</a
+      >
+      <!-- <a
         href="/dashboard"
         class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
         >Dashboard</a
-      >
+      > -->
       <div class="p-3"><ThemeToggle /></div>
     </div>
   </div>
@@ -340,6 +341,8 @@ import Search from "./Search.astro";
   }
 </style>
 <script>
+  import { gsap } from "gsap";
+
   function updateCartCount() {
     try {
       const Cart = (globalThis as any).Cart;
@@ -487,5 +490,43 @@ import Search from "./Search.astro";
       checkoutBtn.addEventListener("click", () => {
         window.location.href = "/tienda/carrito";
       });
+
+    // Animación del Logo "Lemone"
+    const logo = document.getElementById('logo-lemone');
+    if (logo) {
+      const letters = logo.querySelectorAll('.logo-letter');
+      
+      logo.addEventListener('mouseenter', () => {
+        if (gsap.isTweening(letters)) return;
+
+        // Fase 1: Caída y dispersión (Tirar las letras)
+        gsap.to(letters, {
+          y: () => Math.random() * 100 + 50, // Caen hacia abajo
+          x: () => (Math.random() - 0.5) * 100, // Se dispersan
+          rotation: () => Math.random() * 180 - 90,
+          opacity: 0,
+          scale: 0.5,
+          duration: 0.6,
+          stagger: {
+            amount: 0.2,
+            from: "random"
+          },
+          ease: "power2.in",
+          onComplete: () => {
+            // Fase 2: Vuelta a colocar
+            gsap.to(letters, {
+              y: 0,
+              x: 0,
+              rotation: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 1.2,
+              ease: "elastic.out(1, 0.4)",
+              stagger: 0.05
+            });
+          }
+        });
+      });
+    }
   });
 </script>

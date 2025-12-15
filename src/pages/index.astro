@@ -3,6 +3,7 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import HeroParallax from '../components/HeroParallax.jsx';
 
 const posts = (await getCollection('blog'))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
@@ -37,12 +38,58 @@ const posts = (await getCollection('blog'))
         .to(heroImageLeft, { opacity: 1, x: '10%', scaleX: -1, duration: 1.2, ease: 'power3.out' }, '<') // Entra desde la izquierda, volteada y con margen
         .to(heroButton, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=1');
     }
+
+    // Efecto de explosión de bananas al hacer clic
+    if (heroButton) {
+      heroButton.addEventListener('click', (e) => {
+        e.preventDefault(); // Evitamos la navegación inmediata
+        const href = heroButton.getAttribute('href');
+        const rect = heroButton.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // Generamos 30 bananas
+        for (let i = 0; i < 30; i++) {
+          const banana = document.createElement('div');
+          banana.textContent = '🍌';
+          banana.style.position = 'fixed';
+          banana.style.left = `${centerX}px`;
+          banana.style.top = `${centerY}px`;
+          banana.style.fontSize = `${Math.random() * 20 + 20}px`;
+          banana.style.pointerEvents = 'none'; // Para que no interfieran con el clic
+          banana.style.zIndex = '100';
+          document.body.appendChild(banana);
+
+          // Animación de explosión con GSAP
+          const angle = Math.random() * Math.PI * 2;
+          const velocity = Math.random() * 200 + 100;
+          
+          gsap.to(banana, {
+            x: Math.cos(angle) * velocity,
+            y: Math.sin(angle) * velocity + 200, // Añadimos "gravedad" positiva en Y
+            rotation: Math.random() * 720 - 360,
+            opacity: 0,
+            duration: 1 + Math.random(),
+            ease: "power2.out",
+            onComplete: () => banana.remove()
+          });
+        }
+
+        // Navegamos después de un pequeño retraso para ver el efecto
+        setTimeout(() => {
+          if (href) window.location.href = href;
+        }, 800);
+      });
+    }
   });
 </script>
 
 <Layout title="LEMONE">
   <!-- Hero brutal -->
   <section class="hero-section bg-gradient-to-br from-amber-800 to-amber-900 text-white overflow-hidden relative">
+    <!-- Fondo interactivo con React -->
+    <HeroParallax client:load />
+
     <div class="container mx-auto px-4 py-20 text-center relative z-10">
       <h1 class="hero-title text-5xl md:text-6xl font-extrabold tracking-tight">
         {"¡Bienvenido a Lemoné!".split(' ').map((word) => (
