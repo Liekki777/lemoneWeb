@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo } from 'preact/hooks';
+import { useState, useEffect } from 'react';
 
 const HIGH_SCORE_KEY = 'trilerosHighScore';
 // Hacemos el espaciado responsive para una mejor experiencia móvil.
