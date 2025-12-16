@@ -1,9 +1,9 @@
 --- 
-title: Mi primer post con Astro 
-description: Probando lo f cil que es tener un blog 
+title: Clair Obscur se lleva todos los TGA
+description: Todos toditos todos.
 pubDate: 2025-03-25 
-author: T£ 
-tags: [astro, blog] 
+author: Lemone
+tags: [astro, blog, expedition33,] 
 --- 
  
-­Hola mundo desde el post 1! 
+Clair Obscur: Expedition 33 se lleva todos los TGA a los que optaba.
