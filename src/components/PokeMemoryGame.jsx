@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect } from 'react';
 
 const POKEMON_COUNT = 8; // 8 pares, 16 cartas
 
