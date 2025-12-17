@@ -23,6 +23,14 @@ export default function HeroParallax() {
     { icon: '🍌', top: '75%', left: '80%', speed: 25, size: 'text-4xl' },
     { icon: '✨', top: '30%', left: '45%', speed: 10, size: 'text-2xl' },
     { icon: '🍋', top: '85%', left: '40%', speed: -25, size: 'text-5xl' },
+    { icon: '🍃', top: '5%', left: '50%', speed: 15, size: 'text-3xl' },
+    { icon: '🍌', top: '45%', left: '5%', speed: -25, size: 'text-4xl' },
+    { icon: '✨', top: '15%', left: '70%', speed: 20, size: 'text-2xl' },
+    { icon: '🍋', top: '65%', left: '90%', speed: 35, size: 'text-4xl' },
+    { icon: '🍌', top: '95%', left: '20%', speed: -30, size: 'text-5xl' },
+    { icon: '🍃', top: '35%', left: '60%', speed: 18, size: 'text-3xl' },
+    { icon: '✨', top: '80%', left: '70%', speed: -12, size: 'text-2xl' },
+    { icon: '🍋', top: '55%', left: '25%', speed: 22, size: 'text-3xl' },
   ];
 
   return (
