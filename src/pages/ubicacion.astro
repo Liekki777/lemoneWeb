@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LocationCard from '../components/LocationCard.jsx';
+---
+
+<Layout title="Ubicación - Lemoné">
+  <main class="container mx-auto px-4 py-12">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">Dónde Encontrarnos</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-300">Ven a visitarnos a nuestra sede central.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Mapa de Google (Simulando ubicación en Puerta del Sol, Madrid) -->
+      <div class="w-full h-[400px] bg-gray-200 rounded-2xl overflow-hidden shadow-lg border-4 border-white dark:border-gray-700">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3037.357677995279!2d-3.703790284603884!3d40.41677537936524!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd422880e27929b5%3A0x1f6a3034d3531a1!2sPuerta%20del%20Sol%2C%20Madrid!5e0!3m2!1ses!2ses!4v1647876543210!5m2!1ses!2ses" 
+          width="100%" 
+          height="100%" 
+          style="border:0;" 
+          allowfullscreen="" 
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+
+      <!-- Componente React Interactivo -->
+      <div class="flex justify-center w-full">
+        <LocationCard client:visible />
+      </div>
+    </div>
+  </main>
+</Layout>
