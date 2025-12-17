@@ -1,20 +1,15 @@
 import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 import pagefind from 'astro-pagefind';
-// import netlify from '@astrojs/netlify'; <--- ELIMINA O COMENTA ESTO
-
+import cloudflare from '@astrojs/cloudflare'; // Esto se añadió con el comando
 import react from '@astrojs/react';
 
-// https://astro.build/config
 export default defineConfig({
-  // --- CONFIGURACIÓN PARA GITHUB PAGES ---
-  // Reemplaza con tu usuario real de GitHub
-  site: 'https://liekki777.github.io',
-  // El nombre de tu repositorio
-  base: '/lemoneWeb', 
-  // ---------------------------------------
+  // BORRA o comenta las líneas 'site' y 'base' que pusimos para GitHub.
+  // Al no ponerlas, Astro asume que el sitio está en la raíz '/', que es lo que queremos.
 
   integrations: [tailwind(), pagefind(), react()],
-  
-  // adapter: netlify() <--- ELIMINA O COMENTA ESTO
+
+  output: 'server', // O 'static', el adaptador lo suele configurar, pero 'server' o 'hybrid' te da más poder en Cloudflare
+  adapter: cloudflare()
 });
