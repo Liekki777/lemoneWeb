@@ -1,5 +1,7 @@
 ---
 // src/pages/blog/[...page].astro
+export const prerender = true; // <--- AÑADE ESTA LÍNEA AL PRINCIPIO
+
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
