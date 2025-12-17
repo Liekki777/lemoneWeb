@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import Giscus from '../../components/Giscus.astro';
 
+export const prerender = true; // <--- AÑADE ESTA LÍNEA
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
