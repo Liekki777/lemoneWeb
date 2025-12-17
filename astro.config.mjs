@@ -9,7 +9,7 @@ import react from '@astrojs/react';
 export default defineConfig({
   // --- CONFIGURACIÓN PARA GITHUB PAGES ---
   // Reemplaza con tu usuario real de GitHub
-  site: 'https://TU_USUARIO.github.io',
+  site: 'https://liekki777.github.io',
   // El nombre de tu repositorio
   base: '/lemoneWeb', 
   // ---------------------------------------
