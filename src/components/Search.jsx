@@ -101,19 +101,37 @@ export default function Search() {
               {results.length > 0 ? (
                 <ul className="p-2">
                    <li className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Resultados</li>
-                  {results.map((result) => (
+               {results.map((result) => (
                     <li key={result.item.slug}>
                       <a 
                         href={`/blog/${result.item.slug}`} 
-                        className="block p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 group transition-colors"
-                        onClick={closeModal} // Cierra al hacer clic en un enlace
+                        // CAMBIO 1: Añadimos 'flex', 'items-center' y 'gap-4' al contenedor principal
+                        className="flex items-center gap-4 p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 group transition-colors"
+                        onClick={closeModal}
                       >
-                        <p className="font-semibold text-gray-800 dark:text-gray-100 group-hover:text-red-600 dark:group-hover:text-red-400">
-                          {result.item.title}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
-                          {result.item.description}
-                        </p>
+                        {/* CAMBIO 2: Bloque de la IMAGEN (solo si existe) */}
+                        {result.item.image && (
+                          <div className="flex-shrink-0">
+                            <img 
+                              src={result.item.image} 
+                              alt={result.item.title}
+                              // Aquí definimos el tamaño: w-14 h-14 (aprox 56px), y object-cover para que no se deforme
+                              className="w-14 h-14 object-cover rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800"
+                              // Añadimos un fallback por si la imagen falla al cargar
+                              onError={(e) => {e.target.style.display = 'none'}}
+                            />
+                          </div>
+                        )}
+
+                        {/* CAMBIO 3: Contenedor del TEXTO (usamos flex-grow y min-w-0 para que el truncate funcione bien) */}
+                        <div className="flex-grow min-w-0">
+                          <p className="font-semibold text-gray-800 dark:text-gray-100 group-hover:text-red-600 dark:group-hover:text-red-400 truncate">
+                            {result.item.title}
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
+                            {result.item.description}
+                          </p>
+                        </div>
                       </a>
                     </li>
                   ))}

@@ -1,16 +1,25 @@
+// src/pages/busqueda.json.js
 import { getCollection } from 'astro:content';
 
 export async function GET({}) {
-    // 1. Obtenemos tus posts (ajusta 'blog' si tu colección se llama de otra forma)
+    // Asegúrate de que 'blog' es el nombre correcto de tu colección
     const posts = await getCollection('blog');
     
-    // 2. Preparamos los datos que queremos buscar
-    const searchList = posts.map((post) => ({
-        slug: post.slug,
-        title: post.data.title,
-        description: post.data.description,
-        // Agrega aquí más campos si quieres buscar por tags, fecha, etc.
-    }));
+    const searchList = posts.map((post) => {
+        // Intentamos obtener la ruta de la imagen.
+        // Si usas Astro Assets, la ruta suele estar en post.data.image.src
+        // Si usas rutas directas a /public, suele ser post.data.image
+        // Esta línea intenta cubrir ambos casos:
+        const imagePath = post.data.image?.src || post.data.image || null;
+
+        return {
+            slug: post.slug,
+            title: post.data.title,
+            description: post.data.description,
+            // AÑADIMOS LA IMAGEN AQUÍ:
+            image: imagePath,
+        };
+    });
 
     return new Response(JSON.stringify(searchList), {
         headers: {
