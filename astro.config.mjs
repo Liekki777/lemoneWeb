@@ -5,7 +5,7 @@ import cloudflare from '@astrojs/cloudflare'; // Esto se añadió con el comando
 import react from '@astrojs/react';
 
 export default defineConfig({
-  site: 'https://lemone.pages.dev', // Actualiza esto con tu nueva URL de Cloudflare Pages cuando la tengas
+  site: 'https://lemoneweb.pages.dev', // Actualiza esto con tu nueva URL de Cloudflare Pages cuando la tengas
 
   integrations: [tailwind(), pagefind(), react()],
 
