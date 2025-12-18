@@ -1,10 +1,14 @@
 ---
 // src/components/Navbar.astro
 import ThemeToggle from "./ThemeToggle.astro";
-import Search from "./Search.astro";
+
+// IMPORTANTE: Asegúrate de que tu componente React se llame así y esté en esta ruta:
+import SearchInput from "./Search.jsx"; 
+
+// Si aún usas el Search antiguo (el modal) para móvil, mantenlo con otro nombre o elimínalo si ya no lo usas.
+// import SearchModal from "./Search.astro"; 
 ---
 
-<!-- NAVBAR SIMPLE Y ELEGANTE -->
 <nav
   class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#0d1117]/80 backdrop-blur-sm shadow-lg dark:shadow-black/20 z-50 h-16 transition-colors duration-300"
 >
@@ -13,9 +17,7 @@ import Search from "./Search.astro";
       {"Lemone".split('').map(char => <span class="inline-block logo-letter">{char}</span>)}
     </a>
 
-    <!-- MENÚ DESKTOP -->
-    <div class="hidden lg:flex items-center space-x-8">
-      <a
+    <div class="hidden lg:flex items-center space-x-6"> <a
         href="/"
         class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors"
         >Inicio</a
@@ -31,7 +33,7 @@ import Search from "./Search.astro";
         class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors"
         >TGA Tickets</a
       >
-      <!-- <a href="/destacado" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Destacado</a> -->
+      
       <a href="/rankings" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Rankings</a>
       <a
         href="/juegos"
@@ -44,7 +46,6 @@ import Search from "./Search.astro";
         >Tienda</a
       >
 
-      <!-- <a href="/dashboard" class="text-gray-600 dark:text-gray-300 text-lg hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a> -->
       <button
         type="button"
         id="cartBtnDesktop"
@@ -58,16 +59,15 @@ import Search from "./Search.astro";
           style="display:none;">0</span
         >
       </button>
+
       <ThemeToggle />
-      <button
-        id="searchBtnDesktop"
-        class="flex items-center px-3 py-1.5 border border-gray-400 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
-      >
-        <i class="bi bi-search"></i> Buscar
-      </button>
+
+      <div class="w-60 relative z-50"> 
+          <SearchInput client:load />
+      </div>
+
     </div>
 
-    <!-- BOTÓN BUSCAR (móvil) + HAMBURGUESA (se mantiene para mejoras futuras) -->
     <div class="lg:hidden flex items-center space-x-3">
       <button
         id="searchBtnMobile"
@@ -87,7 +87,6 @@ import Search from "./Search.astro";
   </div>
 </nav>
 
-<!-- BOTTOM NAV MÓVIL (estilo compacto tipo nintenderos) -->
 <nav
   id="mobileBottomNav"
   class="lg:hidden fixed bottom-0 left-0 right-0 bg-gray-900 text-white flex justify-around items-center py-2 shadow-lg z-50"
@@ -125,14 +124,7 @@ import Search from "./Search.astro";
     <i class="bi bi-trophy text-2xl"></i>
     <span class="block text-[11px] leading-none">Awards</span>
   </a>
-  <!-- <a
-    href="/destacado"
-    class="flex flex-col items-center text-white text-xs no-underline hover:text-gray-300 transition-colors"
-    aria-label="Destacado"
-  >
-    <i class="bi bi-star text-2xl"></i>
-    <span class="block text-[11px] leading-none">Destacado</span>
-  </a> -->
+
   <a
     href="/rankings"
     class="flex flex-col items-center text-white text-xs no-underline hover:text-gray-300 transition-colors"
@@ -163,24 +155,8 @@ import Search from "./Search.astro";
     >
     <span class="block text-[11px] leading-none">Carrito</span>
   </button>
-
-  
-  <!-- <a
-    href="/dashboard"
-    class="flex flex-col items-center text-white text-xs no-underline hover:text-gray-300 transition-colors"
-    aria-label="Dashboard"
-  >
-    <i class="bi bi-grid-1x2 text-2xl"></i>
-    <span class="block text-[11px] leading-none">Dashboard</span>
-  </a> -->
 </nav>
 
-<!-- MODAL DE BÚSQUEDA (siempre en el DOM → Pagefind lo detecta) -->
-<!-- Renderizo el componente de búsqueda personalizado (modal + script) -->
-<Search />
-<!-- NOTA: La funcionalidad de abrir/cerrar el modal de búsqueda debe ser implementada con JavaScript personalizado. -->
-
-<!-- OFFCANVAS MÓVIL (se abre desde el botón hamburguesa) -->
 <div
   class="fixed top-0 right-0 w-80 max-w-xs h-full bg-gray-900 text-white transform translate-x-full transition-transform duration-300 ease-in-out z-[1050]"
   tabindex="-1"
@@ -220,11 +196,6 @@ import Search from "./Search.astro";
         class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
         >Rankings</a
       >
-      <!-- <a
-        href="/noticias"
-        class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
-        >Noticias</a
-      > -->
       
       <a
         href="/juegos"
@@ -236,18 +207,11 @@ import Search from "./Search.astro";
         class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
         >Tienda</a
       >
-      <!-- <a
-        href="/dashboard"
-        class="block p-3 text-white hover:bg-gray-800 rounded-md transition-colors"
-        >Dashboard</a
-      > -->
       <div class="p-3"><ThemeToggle /></div>
     </div>
   </div>
 </div>
-<!-- NOTA: La funcionalidad de abrir/cerrar este offcanvas debe ser implementada con JavaScript personalizado. -->
 
-<!-- OFFCANVAS CARRITO -->
 <div
   class="fixed top-0 right-0 w-80 max-w-xs h-full bg-white dark:bg-gray-800 shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-[1050]"
   tabindex="-1"
@@ -298,12 +262,8 @@ import Search from "./Search.astro";
     </div>
   </div>
 </div>
-<!-- NOTA: La funcionalidad de abrir/cerrar este offcanvas debe ser implementada con JavaScript personalizado. -->
-<style is:global>
-  /* El padding-top del body ahora se gestiona en Layout.astro */
-  /* El padding-bottom del body se gestiona en Layout.astro o por el contenido principal */
 
-  /* Animaciones para enlaces del bottom nav */
+<style is:global>
   #mobileBottomNav a {
     transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
@@ -319,7 +279,6 @@ import Search from "./Search.astro";
     text-shadow: 0 0 8px rgba(220, 0, 0, 0.5);
   }
 
-  /* Efecto de ripple en móvil (pulse visual) */
   @media (hover: none) {
     #mobileBottomNav a:active {
       animation: pulse-ripple 0.6s ease-out;
@@ -340,6 +299,7 @@ import Search from "./Search.astro";
     }
   }
 </style>
+
 <script>
   import { gsap } from "gsap";
 
@@ -378,7 +338,6 @@ import Search from "./Search.astro";
   document.addEventListener("DOMContentLoaded", () => {
     updateCartCount();
     window.addEventListener("cart-updated", updateCartCount);
-    // Render offcanvas content
     const renderOffcanvas = () => {
       try {
         const Cart: any = (globalThis as any).Cart;
@@ -386,14 +345,14 @@ import Search from "./Search.astro";
         const container = document.getElementById("cartOffcanvasItems");
         const totalEl = document.getElementById("cartOffcanvasTotal");
         if (!container || !totalEl) return;
-        container.innerHTML = ""; // Limpiar contenido previo
+        container.innerHTML = ""; 
         let total = 0;
         if (!items.length) {
           container.innerHTML =
             '<div class="text-gray-500 dark:text-gray-400">Tu carrito está vacío</div>';
         } else {
           for (const it of items) {
-            total += it.price * (it.quantity || 1); // Asegurarse de que quantity sea al menos 1
+            total += it.price * (it.quantity || 1); 
             const a = document.createElement("div");
             a.className =
               "flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-md";
@@ -413,8 +372,7 @@ import Search from "./Search.astro";
             container.appendChild(a);
           }
         }
-        totalEl.textContent = `Total: €${Number(total).toFixed(2)}`; // The color is handled by CSS classes on the element
-        // attach handlers
+        totalEl.textContent = `Total: €${Number(total).toFixed(2)}`; 
         for (const b of Array.from(
           container.querySelectorAll(".cart-off-decr")
         )) {
@@ -440,7 +398,6 @@ import Search from "./Search.astro";
       }
     };
 
-    // --- Funcionalidad de Offcanvas y Modal (requiere JS personalizado) ---
     const mobileMenuBtn = document.getElementById("mobileMenuBtn");
     const mobileOffcanvas = document.getElementById("mobileOffcanvas");
     const closeMobileOffcanvasBtn = document.getElementById(
@@ -454,7 +411,6 @@ import Search from "./Search.astro";
       "closeCartOffcanvasBtn"
     );
 
-    // Función genérica para abrir/cerrar offcanvas
     const toggleOffcanvas = (
       offcanvasElement: HTMLElement | null,
       show: boolean
@@ -484,14 +440,12 @@ import Search from "./Search.astro";
     );
 
     window.addEventListener("cart-updated", renderOffcanvas);
-    // checkout button: go to carrito page
     const checkoutBtn = document.getElementById("cartCheckoutBtn");
     if (checkoutBtn)
       checkoutBtn.addEventListener("click", () => {
         window.location.href = "/tienda/carrito";
       });
 
-    // Animación del Logo "Lemone"
     const logo = document.getElementById('logo-lemone');
     if (logo) {
       const letters = logo.querySelectorAll('.logo-letter');
@@ -499,10 +453,9 @@ import Search from "./Search.astro";
       logo.addEventListener('mouseenter', () => {
         if (gsap.isTweening(letters)) return;
 
-        // Fase 1: Caída y dispersión (Tirar las letras)
         gsap.to(letters, {
-          y: () => Math.random() * 100 + 50, // Caen hacia abajo
-          x: () => (Math.random() - 0.5) * 100, // Se dispersan
+          y: () => Math.random() * 100 + 50, 
+          x: () => (Math.random() - 0.5) * 100, 
           rotation: () => Math.random() * 180 - 90,
           opacity: 0,
           scale: 0.5,
@@ -513,7 +466,6 @@ import Search from "./Search.astro";
           },
           ease: "power2.in",
           onComplete: () => {
-            // Fase 2: Vuelta a colocar
             gsap.to(letters, {
               y: 0,
               x: 0,
