@@ -5,8 +5,7 @@ import cloudflare from '@astrojs/cloudflare'; // Esto se añadió con el comando
 import react from '@astrojs/react';
 
 export default defineConfig({
-  // BORRA o comenta las líneas 'site' y 'base' que pusimos para GitHub.
-  // Al no ponerlas, Astro asume que el sitio está en la raíz '/', que es lo que queremos.
+  site: 'https://lemone.pages.dev', // Actualiza esto con tu nueva URL de Cloudflare Pages cuando la tengas
 
   integrations: [tailwind(), pagefind(), react()],
 
