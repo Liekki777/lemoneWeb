@@ -9,6 +9,6 @@ export default defineConfig({
 
   integrations: [tailwind(), pagefind(), react()],
 
-  output: 'server', // O 'static', el adaptador lo suele configurar, pero 'server' o 'hybrid' te da más poder en Cloudflare
+  output: 'static', // O 'static', el adaptador lo suele configurar, pero 'server' o 'hybrid' te da más poder en Cloudflare
   adapter: cloudflare()
 });
